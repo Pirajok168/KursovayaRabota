@@ -4,7 +4,7 @@ CREATE TABLE Orders(
     presumptiveDate INTEGER NOT NULL,
     idModel INTEGER  NOT NULL,
     idClient INTEGER NOT NULL,
-    coastOrder INTEGER NOT NULL,
+    costOrder INTEGER NOT NULL,
     prepayment INTEGER,
     statusOrder TEXT NOT NULL,
     FOREIGN KEY (idModel) REFERENCES Model(idModel) ON DELETE CASCADE,
@@ -19,9 +19,16 @@ CREATE TABLE Master(
     salary REAL NOT NULL
 );
 
+CREATE TABLE MasrerOrder(
+    idMaster INTEGER,
+    idOrder INTEGER,
+    FOREIGN KEY (idMaster) REFERENCES Master(idMaster) ON DELETE CASCADE,
+    FOREIGN KEY (idOrder) REFERENCES Orders(idOrder) ON DELETE CASCADE
+);
+
 CREATE TABLE Model(
     idModel INTEGER PRIMARY KEY NOT NULL,
-    coast INTEGER NOT NULL,
+    cost INTEGER NOT NULL,
     weight REAL NOT NULL,
     productionTime INTEGER NOT NULL,
     name TEXT NOT NULL
@@ -36,4 +43,20 @@ CREATE TABLE Client(
     phoneNumber Text,
     mail TEXT
 );
+
+showCakeByCost:
+    SELECT * FROM Model WHERE cost == (:cost);
+
+showOrdesByDate:
+    SELECT * FROM Orders WHERE presumptiveDate == (:presumptiveDate);
+
+showOrdersByIndividualClient:
+    SELECT statusOrder FROM Orders WHERE idClient == (:idClient);
+
+assignmentMaster:
+     INSERT OR REPLACE INTO MasrerOrder(idMaster, idOrder)
+        VALUES (?, ?);
+
+showOrdersByIndividualMaster:
+    SELECT * FROM MasrerOrder WHERE idMaster == (:idMaster);
 
