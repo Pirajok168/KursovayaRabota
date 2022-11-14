@@ -1,0 +1,39 @@
+CREATE TABLE Orders(
+    idOrder INTEGER PRIMARY KEY NOT NULL,
+    registrationDate INTEGER NOT NULL,
+    presumptiveDate INTEGER NOT NULL,
+    idModel INTEGER  NOT NULL,
+    idClient INTEGER NOT NULL,
+    coastOrder INTEGER NOT NULL,
+    prepayment INTEGER,
+    statusOrder TEXT NOT NULL,
+    FOREIGN KEY (idModel) REFERENCES Model(idModel) ON DELETE CASCADE,
+    FOREIGN KEY (idClient) REFERENCES Client(idClient) ON DELETE CASCADE
+);
+
+CREATE TABLE Master(
+    idMaster INTEGER PRIMARY KEY NOT NULL,
+    surname TEXT NOT NULL,
+    name TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    salary REAL NOT NULL
+);
+
+CREATE TABLE Model(
+    idModel INTEGER PRIMARY KEY NOT NULL,
+    coast INTEGER NOT NULL,
+    weight REAL NOT NULL,
+    productionTime INTEGER NOT NULL,
+    name TEXT NOT NULL
+
+);
+
+CREATE TABLE Client(
+    idClient  INTEGER PRIMARY KEY NOT NULL,
+    surname TEXT NOT NULL,
+    name TEXT NOT NULL,
+    lastname TEXT,
+    phoneNumber Text,
+    mail TEXT
+);
+
