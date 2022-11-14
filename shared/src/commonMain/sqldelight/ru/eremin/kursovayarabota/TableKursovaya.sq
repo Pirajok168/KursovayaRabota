@@ -48,15 +48,27 @@ showCakeByCost:
     SELECT * FROM Model WHERE cost == (:cost);
 
 showOrdesByDate:
-    SELECT * FROM Orders WHERE presumptiveDate == (:presumptiveDate);
+    SELECT * FROM Orders o
+    LEFT JOIN Model m ON m.idModel == o.idModel AND presumptiveDate == (:presumptiveDate)
+    LEFT JOIN Client c ON c.idClient == o.idClient;
 
 showOrdersByIndividualClient:
-    SELECT statusOrder FROM Orders WHERE idClient == (:idClient);
+    SELECT statusOrder FROM Orders o
+    LEFT JOIN Client c ON c.idClient == o.idClient AND c.idClient == (:idClient);
+
+createMaster:
+    INSERT OR REPLACE INTO Master(idMaster, surname, name, lastname,salary)
+        VALUES (?,?,?,?,?);
+
+createOrder:
+    INSERT OR REPLACE INTO Orders(idOrder, registrationDate, presumptiveDate,idModel,idClient,costOrder,prepayment,statusOrder)
+        VALUES (?,?,?,?,?,?,?,?);
 
 assignmentMaster:
      INSERT OR REPLACE INTO MasrerOrder(idMaster, idOrder)
         VALUES (?, ?);
 
 showOrdersByIndividualMaster:
-    SELECT * FROM MasrerOrder WHERE idMaster == (:idMaster);
+    SELECT o.* FROM MasrerOrder t
+    LEFT JOIN Orders o ON o.idOrder == t.idOrder AND t.idMaster == (:idMaster);
 

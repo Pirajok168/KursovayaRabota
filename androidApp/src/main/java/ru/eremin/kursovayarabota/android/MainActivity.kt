@@ -3,6 +3,7 @@ package ru.eremin.kursovayarabota.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.eremin.kursovayarabota.Greeting
+import ru.eremin.kursovayarabota.KursovayaSDK
+import ru.eremin.kursovayarabota.datasources.db.DAO
+import ru.eremin.kursovayarabota.datasources.db.MasterEntity
+import ru.eremin.kursovayarabota.datasources.di.dialogChatModule
 
 @Composable
 fun MyApplicationTheme(
@@ -57,6 +66,30 @@ fun MyApplicationTheme(
     )
 }
 
+class ViewModelDatabase(
+    private val database: DAO = KursovayaSDK.dialogChatModule.repo
+): ViewModel() {
+
+    fun createMaster(){
+        val listMaster = listOf<MasterEntity>(
+            MasterEntity(
+                idMaster = 1,
+                surname = "Галкин",
+                lastname = "Александрович",
+                salary = 50000.0,
+                name = "Максим"
+            )
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            listMaster.forEach {
+                database.createMaster(masterEntity = it)
+            }
+        }
+    }
+
+
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +99,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting(Greeting().greeting())
+                    val viewModel = viewModels<ViewModelDatabase>()
+
+
                 }
             }
         }
