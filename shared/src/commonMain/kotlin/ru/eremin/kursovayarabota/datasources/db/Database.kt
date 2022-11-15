@@ -1,17 +1,21 @@
 package ru.eremin.kursovayarabota.datasources.db
 
 import com.squareup.sqldelight.db.SqlDriver
+import ru.eremin.kursovayarabota.Model
 import ru.eremin.kursovayarabota.TableKursovaya
+import ru.eremin.kursovayarabota.datasources.repo.TypeCake
 
 
 interface DAO{
-    fun showCakeByCost(cost: Int)
+    fun showCakeByCost(cost: Int): Model?
     fun showOrdersByDate(presumptiveDate: Int)
     fun showOrdersByIndividualClient(idClient: Int)
     fun assignmentMaster(idMaster: Int, idOrder: Int)
     fun showOrdersByIndividualMaster(idMaster: Int)
     fun createOrder()
     fun createMaster(masterEntity: MasterEntity)
+    fun createCake(cake: Model)
+    fun showAllCake(typeCake: TypeCake): List<Model>
 }
 
 interface IDatabase {
@@ -33,9 +37,18 @@ class Database(
 ): DAO {
     private val database = TableKursovaya(driver)
     private val dbQuery = database.tableKursovayaQueries
+    override fun showAllCake(typeCake: TypeCake): List<Model> {
+        return dbQuery.showAllCake(typeCake.name).executeAsList()
+    }
 
-    override fun showCakeByCost(cost: Int) {
-        dbQuery.showCakeByCost(cost.toLong())
+    override fun createCake(cake: Model) {
+        cake.apply {
+            dbQuery.createCake(idModel, cost, weight, productionTime, name, type, patch)
+        }
+    }
+
+    override fun showCakeByCost(cost: Int): Model?{
+        return dbQuery.showCakeByCost(cost.toLong()).executeAsOneOrNull()
     }
 
     override fun showOrdersByDate(presumptiveDate: Int) {
@@ -67,6 +80,8 @@ class Database(
             salary = masterEntity.salary
         )
     }
+
+
 
 
 }

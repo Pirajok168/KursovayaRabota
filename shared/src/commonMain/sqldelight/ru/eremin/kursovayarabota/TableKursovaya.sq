@@ -30,9 +30,10 @@ CREATE TABLE Model(
     idModel INTEGER PRIMARY KEY NOT NULL,
     cost INTEGER NOT NULL,
     weight REAL NOT NULL,
-    productionTime INTEGER NOT NULL,
-    name TEXT NOT NULL
-
+    productionTime INTEGER AS Int NOT NULL,
+    name TEXT NOT NULL,
+    type TEXT NOT NULL,
+    patch TEXT NOT NULL
 );
 
 CREATE TABLE Client(
@@ -43,6 +44,13 @@ CREATE TABLE Client(
     phoneNumber Text,
     mail TEXT
 );
+
+showAllCake:
+    SELECT * FROM Model WHERE type == (:type);
+
+createCake:
+    INSERT OR REPLACE INTO Model(idModel, cost, weight, productionTime, name, type, patch)
+        VALUES (?,?,?,?,?,?,?);
 
 showCakeByCost:
     SELECT * FROM Model WHERE cost == (:cost);

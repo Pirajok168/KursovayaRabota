@@ -67,25 +67,10 @@ fun MyApplicationTheme(
 }
 
 class ViewModelDatabase(
-    private val database: DAO = KursovayaSDK.dialogChatModule.repo
+
 ): ViewModel() {
 
-    fun createMaster(){
-        val listMaster = listOf<MasterEntity>(
-            MasterEntity(
-                idMaster = 1,
-                surname = "Галкин",
-                lastname = "Александрович",
-                salary = 50000.0,
-                name = "Максим"
-            )
-        )
-        viewModelScope.launch(Dispatchers.IO) {
-            listMaster.forEach {
-                database.createMaster(masterEntity = it)
-            }
-        }
-    }
+
 
 
 }
