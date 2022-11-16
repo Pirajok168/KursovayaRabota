@@ -17,13 +17,13 @@ struct ContentView: View {
     ]
     @State private var pressed = "Фруктовые"
     
-    @State private var basket: Dictionary<Model, Int> = [:]
+    @State private var basket: Dictionary<Int, Int> = [:]
     
     @ObservedObject private var viewModel = ViewModel()
     
     @State private var countOnBasket = 0
    
-    let _cake =  Cake( path: "https://static.1000.menu/img/content/24746/tort-molochnaya-devochka_1515476392_15_max.jpg", name: "Молочный торт", cost: 1300)
+    @State private var showSheet = false
 	var body: some View {
         NavigationStack{
             
@@ -57,30 +57,35 @@ struct ContentView: View {
                     .padding(.horizontal)
                     
                 }
-                ForEach(viewModel.cakes, id: \.self){
+                ForEach(viewModel.previewCakes, id: \.self){
                     _cake in
-                    ElemCake(cake: _cake, count: basket[_cake], onPlus: { (value: Model) in
-                        let _cake = basket[value]
+                    ElemCake(cake: _cake, count: basket[Int(_cake.idModel)], onPlus: { (value: Model) in
+                        let _cake = basket[Int(value.idModel)]
                         if (_cake != nil){
-                            basket[value] = _cake! + 1
-                            countOnBasket += 1
+                            basket[Int(value.idModel)] = _cake! + 1
+                            
                         }else{
-                            basket[value] = 1
-                            countOnBasket = 1
+                            basket[Int(value.idModel)] = 1
+                           
                         }
+                        countOnBasket += 1
+                        
                     },  onMinus: {
                         (value: Model) in
-                        let _cake = basket[value]
+                        let _cake = basket[Int(value.idModel)]
                             if (_cake != nil ){
                                 guard _cake! - 1 >= 0 else{
                                     return
                                 }
-                                basket[value] = _cake! - 1
-                                countOnBasket -= 1
+                                basket[Int(value.idModel)] = _cake! - 1
+                               
                             }else{
-                                basket[value] = 0
-                                countOnBasket = 0
+                                basket[Int(value.idModel)] = 0
+                                
                             }
+                        if countOnBasket != 0 {
+                            countOnBasket -= 1
+                        }
                     } )
                         .padding()
                         .transition(.scale)
@@ -98,11 +103,12 @@ struct ContentView: View {
                 ToolbarItem{
                     ZStack{
                         Button(action: {
-                            
+                            showSheet.toggle()
                         }, label: {
                             Image(systemName: "basket")
                             
                         })
+                        
                         
                         Text("\(countOnBasket)")
                             .frame(width: 20, height: 20)
@@ -115,6 +121,30 @@ struct ContentView: View {
                 
             }
         }
+        .sheet(isPresented: $showSheet, content: {
+            ScrollView(.vertical, showsIndicators: false){
+                LazyVStack(alignment: .leading, spacing: 15, pinnedViews: .sectionHeaders, content: {
+                    Section(content: {
+                        ForEach(basket.keys.sorted(), id: \.self){
+                            idModel in
+                            
+                            let cake: Model? = viewModel.cakes.first(where: { model in
+                                model.idModel == idModel
+                            })
+                         
+                            
+                            BasketElem(cake: cake!, count: basket[idModel]!)
+                        }
+                    }, header: {
+                        Text("Корзина")
+                            .font(.title.bold())
+                    })
+                    .padding()
+                })
+                
+               
+            }
+        })
 	}
   
 }

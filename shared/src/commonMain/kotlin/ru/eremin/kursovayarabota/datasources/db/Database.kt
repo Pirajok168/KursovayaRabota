@@ -38,7 +38,7 @@ class Database(
     private val database = TableKursovaya(driver)
     private val dbQuery = database.tableKursovayaQueries
     override fun showAllCake(typeCake: TypeCake): List<Model> {
-        return dbQuery.showAllCake(typeCake.name).executeAsList()
+        return dbQuery.showAllCake().executeAsList()
     }
 
     override fun createCake(cake: Model) {

@@ -14,6 +14,8 @@ class ViewModel: ObservableObject{
     private let repo: IRepository = KursovayaSDK().dialogChatModule.repo
     @Published var cakes: [Model] = []
     
+    @Published var previewCakes: [Model] = []
+    
     func createCake(){
         repo.createCake(completionHandler: {_ in
             
@@ -27,9 +29,9 @@ class ViewModel: ObservableObject{
     }
     
     func showCake(typeCake: TypeCake){
-        repo.showAllCake(typeCake: typeCake, completionHandler: {
-            (model, error) in
-            self.cakes = model ?? []
+        previewCakes = cakes.filter({
+            model in
+            model.type == typeCake.name
         })
     }
     

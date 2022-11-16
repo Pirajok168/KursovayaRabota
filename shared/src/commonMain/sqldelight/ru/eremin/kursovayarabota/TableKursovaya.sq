@@ -46,7 +46,7 @@ CREATE TABLE Client(
 );
 
 showAllCake:
-    SELECT * FROM Model WHERE type == (:type);
+    SELECT * FROM Model;
 
 createCake:
     INSERT OR REPLACE INTO Model(idModel, cost, weight, productionTime, name, type, patch)

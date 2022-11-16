@@ -9,6 +9,72 @@
 import SwiftUI
 import shared
 
+struct BasketElem: View{
+    let cake: Model
+    let count: Int
+    var body: some View{
+        ZStack{
+            Color.clear.background(.ultraThinMaterial)
+            
+            HStack {
+               
+                
+                AsyncImage(url: URL(string: cake.patch), content: {
+                    image in
+                    
+                        image
+                            .resizable()
+                            .frame(width: 160, height: 180)
+                            .aspectRatio(contentMode: .fill)
+                            .transition(.scale)
+                            
+                    
+                   
+                    
+                }, placeholder: {
+                    ProgressView()
+                })
+                .frame(width: 160, height: 180)
+                    
+                
+                
+                
+                
+                VStack(alignment: .leading){
+                    Text(cake.name)
+                        .bold()
+                        .font(.system(size: 20))
+                        .padding(.horizontal)
+                        .padding(.bottom, 5)
+                    
+                    Text("Стоимость: \(cake.cost) ₽")
+                        .padding(.horizontal)
+                        
+                    
+                    Text("Вес: \(String(format: "%.2f", cake.weight)) грамм")
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    
+                    Text("Количество: \(count)")
+                        .font(.title3)
+                        .bold()
+                        .padding(.horizontal)
+                }
+                
+                
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            
+            
+            
+           
+        }
+        .frame(maxWidth: .infinity, minHeight: 180)
+        .cornerRadius(50)
+    }
+}
+
 struct ElemCake: View{
     
     
@@ -18,6 +84,7 @@ struct ElemCake: View{
     let onMinus: (Model) -> Void
     
     init(cake: Model, count: Int?, onPlus: @escaping (Model) -> Void, onMinus: @escaping (Model) -> Void) {
+        print(cake)
         self.cake = cake
         self.count = count
         self.onPlus = onPlus
@@ -59,7 +126,11 @@ struct ElemCake: View{
                         .padding(.horizontal)
                         .padding(.bottom, 5)
                     
-                    Text("\(String(format: "%.2f", cake.cost)) ₽")
+                    Text("Стоимость: \(cake.cost) ₽")
+                        .padding(.horizontal)
+                        
+                    
+                    Text("Вес: \(String(format: "%.2f", cake.weight)) грамм")
                         .padding(.horizontal)
                         .padding(.bottom)
                     
