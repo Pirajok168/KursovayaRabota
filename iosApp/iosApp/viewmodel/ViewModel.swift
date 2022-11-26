@@ -16,6 +16,20 @@ class ViewModel: ObservableObject{
     
     @Published var previewCakes: [Model] = []
     
+    @Published var selectedCake: Model? = nil
+    
+    
+    func createOrder(){
+        repo.createOrder(cakes: self.selectedCake!, idClient: 1, completionHandler: {
+            error in
+            
+        })
+    }
+    
+    func chooiseCake(cake: Model){
+        self.selectedCake = cake
+    }
+   
     func createCake(){
         repo.createCake(completionHandler: {_ in
             

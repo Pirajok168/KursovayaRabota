@@ -11,7 +11,7 @@ import shared
 
 struct BasketElem: View{
     let cake: Model
-    let count: Int
+  
     var body: some View{
         ZStack{
             Color.clear.background(.ultraThinMaterial)
@@ -55,10 +55,7 @@ struct BasketElem: View{
                         .padding(.horizontal)
                         .padding(.bottom)
                     
-                    Text("Количество: \(count)")
-                        .font(.title3)
-                        .bold()
-                        .padding(.horizontal)
+                   
                 }
                 
                 
@@ -79,17 +76,9 @@ struct ElemCake: View{
     
     
     let cake: Model
-    let count: Int?
-    let onPlus: (Model) -> Void
-    let onMinus: (Model) -> Void
+   
+   
     
-    init(cake: Model, count: Int?, onPlus: @escaping (Model) -> Void, onMinus: @escaping (Model) -> Void) {
-        print(cake)
-        self.cake = cake
-        self.count = count
-        self.onPlus = onPlus
-        self.onMinus = onMinus
-    }
     
     var body: some View{
         ZStack{
@@ -134,56 +123,8 @@ struct ElemCake: View{
                         .padding(.horizontal)
                         .padding(.bottom)
                     
-                    HStack{
-                        Circle()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.blue)
-                            .overlay{
-                                Image(systemName: "minus")
-                                
-
-                            }
-                            .padding(.leading)
-                            .padding(.trailing, 10)
-                            
-                            .simultaneousGesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged({
-                                        _ in
-                                       
-                                    })
-                                    .onEnded({
-                                        _ in
-                                        onMinus(cake)
-                                    })
-                            )
-                        
-                        Text("\(count ?? 0)")
-                            .frame(width: 30)
-                        
-                        Circle()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.blue)
-                            .overlay{
-                                Image(systemName: "plus")
-                                
-
-                            }
-                            .padding(.trailing)
-                            .padding(.leading, 10)
-                            
-                            .simultaneousGesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged({
-                                        _ in
-                                       
-                                    })
-                                    .onEnded({
-                                        _ in
-                                        onPlus(cake)
-                                    })
-                            )
-                    }
+                    
+                    
                 }
                 
                 

@@ -17,15 +17,16 @@ struct ContentView: View {
     ]
     @State private var pressed = "Фруктовые"
     
-    @State private var basket: Dictionary<Int, Int> = [:]
+    
     
     @ObservedObject private var viewModel = ViewModel()
     
-    @State private var countOnBasket = 0
    
     @State private var showSheet = false
+    
+   
 	var body: some View {
-        NavigationStack{
+        
             
             ScrollView(.vertical){
                 Button(action: {
@@ -57,93 +58,56 @@ struct ContentView: View {
                     .padding(.horizontal)
                     
                 }
+                
                 ForEach(viewModel.previewCakes, id: \.self){
                     _cake in
-                    ElemCake(cake: _cake, count: basket[Int(_cake.idModel)], onPlus: { (value: Model) in
-                        let _cake = basket[Int(value.idModel)]
-                        if (_cake != nil){
-                            basket[Int(value.idModel)] = _cake! + 1
-                            
-                        }else{
-                            basket[Int(value.idModel)] = 1
-                           
-                        }
-                        countOnBasket += 1
-                        
-                    },  onMinus: {
-                        (value: Model) in
-                        let _cake = basket[Int(value.idModel)]
-                            if (_cake != nil ){
-                                guard _cake! - 1 >= 0 else{
-                                    return
-                                }
-                                basket[Int(value.idModel)] = _cake! - 1
-                               
-                            }else{
-                                basket[Int(value.idModel)] = 0
-                                
-                            }
-                        if countOnBasket != 0 {
-                            countOnBasket -= 1
-                        }
-                    } )
+                    ElemCake(cake: _cake)
                         .padding()
                         .transition(.scale)
-                }
-                
-                
-                
-            }
-            
-            
-           
-            
-            .navigationTitle("Торты")
-            .toolbar {
-                ToolbarItem{
-                    ZStack{
-                        Button(action: {
+                        .onTapGesture {
+                            viewModel.chooiseCake(cake: _cake)
                             showSheet.toggle()
-                        }, label: {
-                            Image(systemName: "basket")
                             
-                        })
-                        
-                        
-                        Text("\(countOnBasket)")
-                            .frame(width: 20, height: 20)
-                            .background(.red)
-                            .clipShape(Circle())
-                            .offset(x: 24, y: -12)
-                    }
-                    
+                        }
                 }
                 
+                
+                
             }
-        }
+        
+            .navigationTitle("Торты")
+            
+            .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showSheet, content: {
             ScrollView(.vertical, showsIndicators: false){
-                LazyVStack(alignment: .leading, spacing: 15, pinnedViews: .sectionHeaders, content: {
-                    Section(content: {
-                        ForEach(basket.keys.sorted(), id: \.self){
-                            idModel in
-                            
-                            let cake: Model? = viewModel.cakes.first(where: { model in
-                                model.idModel == idModel
-                            })
-                         
-                            
-                            BasketElem(cake: cake!, count: basket[idModel]!)
-                        }
-                    }, header: {
-                        Text("Корзина")
-                            .font(.title.bold())
-                    })
-                    .padding()
+                
+                Section(content: {
+                  
+                     
+                        
+                    BasketElem(cake: viewModel.selectedCake!)
+                    
+                }, header: {
+                    Text("Корзина")
+                        .font(.title.bold())
                 })
+                .padding()
+                
                 
                
             }
+            .overlay(alignment: .bottom, content: {
+                Button(action: {
+                    viewModel.createOrder()
+                }, label: {
+                    Text("Сделать заказ")
+                        .frame(maxWidth: .infinity)
+                })
+                .buttonStyle(.bordered)
+                .cornerRadius(30)
+                
+                .padding()
+            })
         })
 	}
   

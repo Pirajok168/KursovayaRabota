@@ -1,6 +1,9 @@
 package ru.eremin.kursovayarabota.datasources.repo
 
+import com.soywiz.klock.DateTime
+import ru.eremin.kursovayarabota.Client
 import ru.eremin.kursovayarabota.Model
+import ru.eremin.kursovayarabota.Orders
 import ru.eremin.kursovayarabota.datasources.db.DAO
 import ru.eremin.kursovayarabota.datasources.db.MasterEntity
 import kotlin.random.Random
@@ -12,25 +15,58 @@ interface IRepository{
     suspend fun showOrdersByIndividualClient(idClient: Int)
     suspend fun assignmentMaster(idMaster: Int, idOrder: Int)
     suspend fun showOrdersByIndividualMaster(idMaster: Int)
-    suspend fun createOrder()
+    suspend fun createOrder(cakes: Model, idClient: Long)
     suspend fun createMaster(masterEntity: MasterEntity)
     suspend fun createCake()
     suspend fun showAllCake(typeCake: TypeCake): List<Model>
+
+    suspend fun auth(phoneNumber: String, email: String): Client?
+
+    suspend fun createClient(
+                              surname: String,
+                              name: String,
+                              lastname: String,
+                              phoneNumber: String,
+                              mail: String)
 }
 
 enum class TypeCake{
     Fruits,
     Milk,
     Chocolate,
+}
 
+sealed class Status(val status: String){
+    object Receive: Status("Принят")
+    object Preparing: Status("Готовится")
+    object Ready: Status("Готов")
 }
 
 class Repository(
    private val dao: DAO
 ): IRepository {
 
+    private var idClient: Long? = null
+
     override suspend fun showAllCake(typeCake: TypeCake): List<Model> {
        return dao.showAllCake(typeCake)
+    }
+
+    override suspend fun auth(phoneNumber: String, email: String): Client? {
+        val client = dao.auth(phoneNumber, email)
+        idClient = client?.idClient
+        return client
+    }
+
+    override suspend fun createClient(
+        surname: String,
+        name: String,
+        lastname: String,
+        phoneNumber: String,
+        mail: String
+    ) {
+        idClient = Random.nextLong()
+        dao.createClient(Client(idClient!!, surname, name, lastname, phoneNumber, mail))
     }
 
     override suspend fun createCake() {
@@ -127,8 +163,22 @@ class Repository(
         TODO("Not yet implemented")
     }
 
-    override suspend fun createOrder() {
-        TODO("Not yet implemented")
+    override suspend fun createOrder(cakes: Model, idClient: Long) {
+        cakes.apply {
+            dao.createOrder(
+                Orders(
+                    idOrder = Random.nextLong(),
+                    registrationDate = DateTime.now().unixMillisLong,
+                    presumptiveDate = DateTime.now().unixMillisLong + productionTime,
+                    idModel = idModel,
+                    idClient = idClient,
+                    costOrder = cost,
+                    prepayment = null,
+                    statusOrder = Status.Receive.status
+                )
+
+            )
+        }
     }
 
     override suspend fun createMaster(masterEntity: MasterEntity) {

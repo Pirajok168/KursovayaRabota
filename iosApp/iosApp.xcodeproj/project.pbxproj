@@ -13,6 +13,8 @@
 		29A60D73292383AD00E62132 /* TypeCakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A60D72292383AD00E62132 /* TypeCakeView.swift */; };
 		29A60D75292383D600E62132 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A60D74292383D600E62132 /* ViewModel.swift */; };
 		29A60D77292383FC00E62132 /* ElemCake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A60D76292383FC00E62132 /* ElemCake.swift */; };
+		29ED05FA29320128006B61B8 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ED05F929320128006B61B8 /* Auth.swift */; };
+		29ED05FC29320843006B61B8 /* MainNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ED05FB29320843006B61B8 /* MainNavigation.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,8 @@
 		29A60D72292383AD00E62132 /* TypeCakeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeCakeView.swift; sourceTree = "<group>"; };
 		29A60D74292383D600E62132 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		29A60D76292383FC00E62132 /* ElemCake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElemCake.swift; sourceTree = "<group>"; };
+		29ED05F929320128006B61B8 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		29ED05FB29320843006B61B8 /* MainNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigation.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -96,6 +100,8 @@
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				29A60D72292383AD00E62132 /* TypeCakeView.swift */,
 				29A60D76292383FC00E62132 /* ElemCake.swift */,
+				29ED05F929320128006B61B8 /* Auth.swift */,
+				29ED05FB29320843006B61B8 /* MainNavigation.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -199,11 +205,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29ED05FC29320843006B61B8 /* MainNavigation.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				29A60D77292383FC00E62132 /* ElemCake.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				29A60D75292383D600E62132 /* ViewModel.swift in Sources */,
 				29A60D73292383AD00E62132 /* TypeCakeView.swift in Sources */,
+				29ED05FA29320128006B61B8 /* Auth.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

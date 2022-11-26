@@ -7,9 +7,10 @@ CREATE TABLE Orders(
     costOrder INTEGER NOT NULL,
     prepayment INTEGER,
     statusOrder TEXT NOT NULL,
-    FOREIGN KEY (idModel) REFERENCES Model(idModel) ON DELETE CASCADE,
-    FOREIGN KEY (idClient) REFERENCES Client(idClient) ON DELETE CASCADE
+    FOREIGN KEY (idModel) REFERENCES Model(idModel),
+    FOREIGN KEY (idClient) REFERENCES Client(idClient)
 );
+
 
 CREATE TABLE Master(
     idMaster INTEGER PRIMARY KEY NOT NULL,
@@ -30,7 +31,7 @@ CREATE TABLE Model(
     idModel INTEGER PRIMARY KEY NOT NULL,
     cost INTEGER NOT NULL,
     weight REAL NOT NULL,
-    productionTime INTEGER AS Int NOT NULL,
+    productionTime INTEGER NOT NULL,
     name TEXT NOT NULL,
     type TEXT NOT NULL,
     patch TEXT NOT NULL
@@ -44,6 +45,13 @@ CREATE TABLE Client(
     phoneNumber Text,
     mail TEXT
 );
+
+auth:
+    SELECT * FROM Client WHERE phoneNumber == (:phone) AND mail == (:mail);
+
+createClient:
+    INSERT INTO Client(idClient, surname, name, lastname, phoneNumber, mail)
+        VALUES (?,?,?,?,?,?);
 
 showAllCake:
     SELECT * FROM Model;
