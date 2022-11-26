@@ -17,10 +17,26 @@ class ViewModel: ObservableObject{
     @Published var previewCakes: [Model] = []
     
     @Published var selectedCake: Model? = nil
+       
+    @Published var orders: [ShowOrdersByIndividualClient] = []
     
+    var id: Int = 0
+    
+    func wq(ee: Int){
+        id = ee
+    }
+    
+    func getOrders(){
+        repo.showOrdersByIndividualClient(idClient: Int64(id), completionHandler: {
+            orders, error in
+            print(orders)
+            self.orders = orders ?? []
+            print(self.orders)
+        })
+    }
     
     func createOrder(){
-        repo.createOrder(cakes: self.selectedCake!, idClient: 1, completionHandler: {
+        repo.createOrder(id:  Int64(id), cakes: self.selectedCake!, idClient: Int64(id), completionHandler: {
             error in
             
         })

@@ -23,6 +23,7 @@ class Navigation: ObservableObject{
 
 struct MainNavigation: View {
     @ObservedObject var nav = Navigation()
+    @State var idCliet: Int = 0
     var body: some View {
         NavigationStack(path: $nav.path){
             EmptyView()
@@ -30,10 +31,14 @@ struct MainNavigation: View {
                     dest in
                     
                     if dest == .Auth {
-                        Auth()
+                        Auth(fun:{
+                            id in
+                            idCliet = id 
+                        })
                             .environmentObject(nav)
+                            
                     }else if dest == .HomeScreen{
-                        ContentView()
+                        ContentView(id: idCliet)
                     }
                 })
         }

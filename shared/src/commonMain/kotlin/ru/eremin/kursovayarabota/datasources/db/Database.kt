@@ -1,17 +1,14 @@
 package ru.eremin.kursovayarabota.datasources.db
 
 import com.squareup.sqldelight.db.SqlDriver
-import ru.eremin.kursovayarabota.Client
-import ru.eremin.kursovayarabota.Model
-import ru.eremin.kursovayarabota.Orders
-import ru.eremin.kursovayarabota.TableKursovaya
+import ru.eremin.kursovayarabota.*
 import ru.eremin.kursovayarabota.datasources.repo.TypeCake
 
 
 interface DAO{
     fun showCakeByCost(cost: Int): Model?
     fun showOrdersByDate(presumptiveDate: Int)
-    fun showOrdersByIndividualClient(idClient: Int)
+    fun showOrdersByIndividualClient(idClient: Long): List<ShowOrdersByIndividualClient>
     fun assignmentMaster(idMaster: Int, idOrder: Int)
     fun showOrdersByIndividualMaster(idMaster: Int)
     fun createOrder(orders: Orders)
@@ -72,8 +69,8 @@ class Database(
        dbQuery.showOrdesByDate(presumptiveDate.toLong())
     }
 
-    override fun showOrdersByIndividualClient(idClient: Int) {
-        dbQuery.showOrdersByIndividualClient(idClient.toLong())
+    override fun showOrdersByIndividualClient(idClient: Long): List<ShowOrdersByIndividualClient> {
+        return dbQuery.showOrdersByIndividualClient(idClient).executeAsList()
     }
 
     override fun assignmentMaster(idMaster: Int, idOrder: Int) {

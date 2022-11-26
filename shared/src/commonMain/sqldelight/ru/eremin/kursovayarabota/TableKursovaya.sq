@@ -46,6 +46,8 @@ CREATE TABLE Client(
     mail TEXT
 );
 
+
+
 auth:
     SELECT * FROM Client WHERE phoneNumber == (:phone) AND mail == (:mail);
 
@@ -69,8 +71,10 @@ showOrdesByDate:
     LEFT JOIN Client c ON c.idClient == o.idClient;
 
 showOrdersByIndividualClient:
-    SELECT statusOrder FROM Orders o
-    LEFT JOIN Client c ON c.idClient == o.idClient AND c.idClient == (:idClient);
+    SELECT * FROM Orders o
+    LEFT JOIN Model m ON m.idModel = o.idModel
+    WHERE o.idClient = (:idClient);
+
 
 createMaster:
     INSERT OR REPLACE INTO Master(idMaster, surname, name, lastname,salary)

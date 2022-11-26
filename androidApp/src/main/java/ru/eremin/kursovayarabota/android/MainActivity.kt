@@ -3,13 +3,11 @@ package ru.eremin.kursovayarabota.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -18,14 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.eremin.kursovayarabota.Greeting
 import ru.eremin.kursovayarabota.KursovayaSDK
-import ru.eremin.kursovayarabota.datasources.db.DAO
-import ru.eremin.kursovayarabota.datasources.db.MasterEntity
+import ru.eremin.kursovayarabota.datasources.db.ContextApplication
 import ru.eremin.kursovayarabota.datasources.di.dialogChatModule
+import ru.eremin.kursovayarabota.datasources.repo.TypeCake
 
 @Composable
 fun MyApplicationTheme(
@@ -78,15 +73,26 @@ class ViewModelDatabase(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ContextApplication.init(this)
         setContent {
             MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    val viewModel = viewModels<ViewModelDatabase>()
+                val scope = rememberCoroutineScope()
+                Button(onClick = {
+                    val repo = KursovayaSDK.dialogChatModule.repo
+                    scope.launch {
+                        repo.createClient(5, "1", "1", "1", "1", "1")
+                        repo.createCake()
+                        val a = repo.showAllCake(TypeCake.Milk)
+                        repo.createOrder(5, a.first(), 0)
+
+                        val b = repo.showOrdersByIndividualClient(5)
+
+                        b
+                    }
 
 
+                }) {
+                    Text(text = "123213")
                 }
             }
         }

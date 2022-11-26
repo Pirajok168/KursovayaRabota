@@ -16,6 +16,7 @@ class InitDatabase: IDatabase {
         },
         extendedConfig = DatabaseConfiguration.Extended(foreignKeyConstraints = true)
     )
+
     override val sqlDriver: SqlDriver
         get() = NativeSqliteDriver(dbConfig)
 }

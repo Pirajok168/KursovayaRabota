@@ -22,19 +22,26 @@ class AuthViewModel: ObservableObject{
     @Published var isClietExists: Bool? = nil
     @Published var errrr: Bool? = nil
     
+    @Published var id: Int = 0
+    
     func auth(){
         repo.auth(phoneNumber: phoneNumber, email: emain, completionHandler: {
             (client, error) in
             if client == nil {
-                self.errrr = true
+                withAnimation{
+                    self.errrr = true
+                }
+                
             }else{
+                self.id = Int(client!.idClient)
                 self.isClietExists = true
             }
         })
     }
     
     func client(  f: @escaping () -> Void ){
-        repo.createClient(surname: surname, name: name, lastname: lastname, phoneNumber: phoneNumber, mail: emain, completionHandler: {
+        id = Int.random(in: 0...100)
+        repo.createClient(id: Int64(id), surname: surname, name: name, lastname: lastname, phoneNumber: phoneNumber, mail: emain, completionHandler: {
             _ in
         })
         f()
@@ -44,6 +51,7 @@ class AuthViewModel: ObservableObject{
 struct Auth: View {
     @ObservedObject var viewModel = AuthViewModel()
     @EnvironmentObject  var nav: Navigation
+    var fun: (Int) -> Void
     
     var body: some View {
         if viewModel.errrr == nil {
@@ -76,6 +84,7 @@ struct Auth: View {
             .onChange(of: viewModel.isClietExists, perform: {
                 newVal in
                 if newVal == true{
+                    fun(viewModel.id)
                     nav.toHomeScreen()
                 }
                
@@ -88,19 +97,23 @@ struct Auth: View {
                 
                 TextField("Введите фамилию", text: $viewModel.surname)
                     .padding()
-                
+                    
                 
                 TextField("Введите отчество", text: $viewModel.lastname)
                     .padding()
+                    
                 
                 TextField("Введите номер телефона", text: $viewModel.phoneNumber)
                     .padding()
+                    
                 
                 TextField("Введите Email", text: $viewModel.emain)
                     .padding()
+                    .transition(.push(from: .leading))
                 
                 Button(action: {
                     viewModel.client(){
+                        fun(viewModel.id)
                         nav.toHomeScreen()
                     }
                     
@@ -124,6 +137,8 @@ struct Auth: View {
 
 struct Auth_Previews: PreviewProvider {
     static var previews: some View {
-        Auth()
+        Auth(){
+            _ in
+        }
     }
 }
