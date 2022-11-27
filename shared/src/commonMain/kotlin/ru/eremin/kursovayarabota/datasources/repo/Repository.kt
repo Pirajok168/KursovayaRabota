@@ -1,29 +1,26 @@
 package ru.eremin.kursovayarabota.datasources.repo
 
 import com.soywiz.klock.DateTime
-import ru.eremin.kursovayarabota.Client
-import ru.eremin.kursovayarabota.Model
-import ru.eremin.kursovayarabota.Orders
-import ru.eremin.kursovayarabota.ShowOrdersByIndividualClient
+import ru.eremin.kursovayarabota.*
 import ru.eremin.kursovayarabota.datasources.db.DAO
 import ru.eremin.kursovayarabota.datasources.db.MasterEntity
 import kotlin.random.Random
 
 
 interface IRepository{
-    suspend fun showCakeByCost(cost: Int)
+    suspend fun showCakeByCost(cost: Int): List<Model>
 
     suspend fun showOrdersByDate(presumptiveDate: Int)
 
     suspend fun showOrdersByIndividualClient(idClient: Long): List<ShowOrdersByIndividualClient>
 
-    suspend fun assignmentMaster(idMaster: Int, idOrder: Int)
+    suspend fun assignmentMaster(idMaster: Int, idOrder: Long, idModel: Long)
 
     suspend fun showOrdersByIndividualMaster(idMaster: Int): List<Orders>
 
     suspend fun createOrder(id: Long, cakes: Model, idClient: Long)
 
-    suspend fun createMaster(masterEntity: MasterEntity)
+    suspend fun createMaster()
 
     suspend fun createCake()
 
@@ -37,6 +34,12 @@ interface IRepository{
                               lastname: String,
                               phoneNumber: String,
                               mail: String)
+
+    suspend fun showAllOrders(): List<AllOrders>
+
+    suspend fun showAllMaster(): List<Master>
+
+   suspend fun getMasterOrders(): List<GetMasterOrders>
 }
 
 enum class TypeCake{
@@ -81,6 +84,10 @@ class Repository(
         //idClient = Random.nextLong()
         dao.createClient(Client(id, surname, name, lastname, phoneNumber, mail))
     }
+
+    override suspend fun showAllOrders(): List<AllOrders> = dao.showAllOrders()
+    override suspend fun showAllMaster(): List<Master> = dao.showAllMaster()
+    override suspend fun getMasterOrders(): List<GetMasterOrders>  = dao.getMasterOrders()
 
     override suspend fun createCake() {
         val cakes = listOf(
@@ -156,8 +163,8 @@ class Repository(
         }
     }
 
-    override suspend fun showCakeByCost(cost: Int) {
-        TODO("Not yet implemented")
+    override suspend fun showCakeByCost(cost: Int): List<Model> {
+        return dao.showCakeByCost(cost)
     }
 
     override suspend fun showOrdersByDate(presumptiveDate: Int) {
@@ -168,8 +175,10 @@ class Repository(
         return dao.showOrdersByIndividualClient(idClient)
     }
 
-    override suspend fun assignmentMaster(idMaster: Int, idOrder: Int) {
-        TODO("Not yet implemented")
+    override suspend fun assignmentMaster(idMaster: Int, idOrder: Long, idModel: Long) {
+        val model = dao.getOrderById(idOrder)
+        dao.replaceOrder(model.copy(statusOrder = Status.Preparing.status))
+        dao.assignmentMaster(idMaster, idOrder)
     }
 
     override suspend fun showOrdersByIndividualMaster(idMaster: Int): List<Orders> {
@@ -194,8 +203,85 @@ class Repository(
 
     }
 
-    override suspend fun createMaster(masterEntity: MasterEntity) {
-        TODO("Not yet implemented")
+    override suspend fun createMaster() {
+
+        val list = listOf<MasterEntity>(
+            MasterEntity(
+                idMaster = 1,
+                surname = "Михалков",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Игорь"
+            ),
+
+            MasterEntity(
+                idMaster = 2,
+                surname = "Жилин",
+                lastname = "Игорьивич",
+                salary = 24000.0,
+                name = "Алексей"
+            ),
+
+            MasterEntity(
+                idMaster = 3,
+                surname = "Заиграев",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Алексей"
+            ),
+
+            MasterEntity(
+                idMaster = 4,
+                surname = "Кузнецов",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Артем"
+            ),
+
+            MasterEntity(
+                idMaster = 5,
+                surname = "Бондарь",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Максим"
+            ),
+
+            MasterEntity(
+                idMaster = 6,
+                surname = "Николавев",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Игорь"
+            ),
+
+            MasterEntity(
+                idMaster = 7,
+                surname = "Еремин",
+                lastname = "Владимирович",
+                salary = 1000000.0,
+                name = "Данил"
+            ),
+
+            MasterEntity(
+                idMaster = 8,
+                surname = "Сазанов",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Алексей"
+            ),
+
+            MasterEntity(
+                idMaster = 9,
+                surname = "Михалков",
+                lastname = "Владимирович",
+                salary = 24000.0,
+                name = "Игорь"
+            ),
+        )
+
+        list.forEach {
+            dao.createMaster(it)
+        }
     }
 
 

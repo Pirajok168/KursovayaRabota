@@ -6,10 +6,10 @@ import ru.eremin.kursovayarabota.datasources.repo.TypeCake
 
 
 interface DAO{
-    fun showCakeByCost(cost: Int): Model?
+    fun showCakeByCost(cost: Int): List<Model>
     fun showOrdersByDate(presumptiveDate: Int)
     fun showOrdersByIndividualClient(idClient: Long): List<ShowOrdersByIndividualClient>
-    fun assignmentMaster(idMaster: Int, idOrder: Int)
+    fun assignmentMaster(idMaster: Int, idOrder: Long)
     fun showOrdersByIndividualMaster(idMaster: Int)
     fun createOrder(orders: Orders)
     fun createMaster(masterEntity: MasterEntity)
@@ -20,6 +20,20 @@ interface DAO{
     suspend fun auth(phoneNumber: String, email: String): Client?
 
     fun createClient(client: Client)
+
+    fun showAllOrders(): List<AllOrders>
+
+    fun showAllMaster(): List<Master>
+
+    fun getMasterOrders(): List<GetMasterOrders>
+
+    fun getModelById(id: Long): Model
+
+    fun replaceCake(cake: Model)
+
+    fun getOrderById(idOrder: Long): Orders
+
+    fun replaceOrder(orders: Orders)
 }
 
 interface IDatabase {
@@ -55,14 +69,32 @@ class Database(
         }
     }
 
+    override fun showAllOrders(): List<AllOrders> = dbQuery.allOrders().executeAsList()
+    override fun showAllMaster(): List<Master> = dbQuery.showAllMaster().executeAsList()
+    override fun getMasterOrders(): List<GetMasterOrders> = dbQuery.getMasterOrders().executeAsList()
+    override fun getModelById(id: Long): Model = dbQuery.getCakesById(id).executeAsOne()
+    override fun replaceCake(cake: Model) {
+        cake.apply {
+            dbQuery.replaceCake(idModel, cost, weight, productionTime, name, type, patch)
+        }
+    }
+
+    override fun getOrderById(idOrder: Long): Orders = dbQuery.getOrderById(idOrder).executeAsOne()
+    override fun replaceOrder(orders: Orders) {
+        orders.apply {
+            dbQuery.createOrder(idOrder, registrationDate, presumptiveDate, idModel, idClient, costOrder, prepayment, statusOrder)
+        }
+    }
+
+
     override fun createCake(cake: Model) {
         cake.apply {
             dbQuery.createCake(idModel, cost, weight, productionTime, name, type, patch)
         }
     }
 
-    override fun showCakeByCost(cost: Int): Model?{
-        return dbQuery.showCakeByCost(cost.toLong()).executeAsOneOrNull()
+    override fun showCakeByCost(cost: Int): List<Model> {
+        return dbQuery.showCakeByCost(cost.toLong()).executeAsList()
     }
 
     override fun showOrdersByDate(presumptiveDate: Int) {
@@ -73,7 +105,7 @@ class Database(
         return dbQuery.showOrdersByIndividualClient(idClient).executeAsList()
     }
 
-    override fun assignmentMaster(idMaster: Int, idOrder: Int) {
+    override fun assignmentMaster(idMaster: Int, idOrder: Long) {
        dbQuery.assignmentMaster(idMaster.toLong(), idOrder.toLong())
     }
 

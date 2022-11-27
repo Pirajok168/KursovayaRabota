@@ -19,15 +19,21 @@ struct ContentView: View {
     
     
     
-    @State private var viewModel = ViewModel()
+    @StateObject private var viewModel = ViewModel()
     
    
     @State private var showSheet = false
     
     @State private var profile = false
     
+    @State private var manage = false
+    
+    @State private var master = false
     let id: Int
    
+    @State private var idOrder = 0
+    
+    @State private var idModel = 0
 	var body: some View {
         
             
@@ -35,8 +41,26 @@ struct ContentView: View {
                 Button(action: {
                     viewModel.createCake()
                 }, label: {
-                    Text("1")
+                    Text("0 .. \(viewModel.slide)")
                 })
+                Text("0 .. \(viewModel.slide)")
+                
+                
+                Slider(
+                    value: $viewModel.slide,
+                        in: 0...13000,
+                        step: 5
+                    ) {
+                        Text("Speed")
+                    } minimumValueLabel: {
+                        Text("0")
+                    } maximumValueLabel: {
+                        Text("13000")
+                    } onEditingChanged: { editing in
+                        viewModel.showByCost()
+                    }
+                .padding()
+                
                 ScrollView(.horizontal, showsIndicators: false){
                     LazyHStack{
                         ForEach(cakes, id: \.self){ cake in
@@ -94,7 +118,133 @@ struct ContentView: View {
                     })
                    
                 })
+                
+                ToolbarItem(placement: .navigationBarLeading, content: {
+                    Button(action: {
+                        manage.toggle()
+                    }, label: {
+                        Image(systemName: "person.fill")
+                    })
+                })
             }
+            .sheet(isPresented: $manage, content: {
+                ScrollView(content: {
+                    LazyVStack{
+                        ForEach(viewModel.allOrders, id: \.self){
+                            order in
+                            HStack{
+                                
+                                AsyncImage(url: URL(string: order.patch!), content: {
+                                    image in
+                                    
+                                    image
+                                        .resizable()
+                                        .frame(width: 160, height: 180)
+                                        .aspectRatio(contentMode: .fill)
+                                        .transition(.scale)
+ 
+                                }, placeholder: {
+                                    ProgressView()
+                                })
+                                .frame(width: 160, height: 180)
+                                Button(action: {
+                                    idOrder = Int(order.idOrder)
+                                    idModel = Int(order.idModel_!)
+                                    master.toggle()
+                                }, label: {
+                                    VStack{
+                                        Text("Клиент: \(order.surname!) \(order.name_!) \(order.lastname!)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                        Text("Модель торта: \(order.name!)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                        Text("Номер телефона клиента \(order.phoneNumber!)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                        Text("Статус \(order.statusOrder)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                })
+                                
+                                
+                                
+                                
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .cornerRadius(20)
+                            
+                            
+                        }
+                    }
+                    .sheet(isPresented: $master, content: {
+                        ScrollView(content: {
+                            LazyVStack(content: {
+                                ForEach(viewModel.masters ,id: \.self, content: {
+                                    master in
+                                    VStack{
+                                        Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                        Text("Зп \(master.salary)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                                        
+                                        
+                                    }
+                                    .onTapGesture {
+                                        viewModel.assignmentMaster(idMaster: master.idMaster, idOrders: self.idOrder, idModel: self.idModel)
+                                    }
+                                    .padding()
+                                    
+                                    Divider()
+                                })
+                            })
+                            
+                            Divider()
+                                .foregroundColor(.red)
+                            
+                            
+                        })
+                        .onAppear{
+                            viewModel.getAllMaster()
+                        }
+                    })
+                    .padding()
+                    Divider()
+                    Divider()
+                    Divider()
+                    
+                    
+                    LazyVStack(content: {
+                      Section(content: {
+                          ForEach(viewModel.masterOrder, id: \.self, content: {
+                              master in
+                              
+                              VStack{
+                                  Text("ФИО \(master.surname!) \(master.name!) \(master.lastname!)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  Text("Торт \(master.name_!)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Статус \(master.statusOrder!)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+
+                              }
+                              .padding()
+                          })
+                      }, header: {
+                          Text("Заказы, который выполняются")
+                              .font(.title3)
+                              .frame(maxWidth: .infinity,  alignment: .leading)
+                              .padding()
+
+                      })
+                        
+                    })
+                })
+                .onAppear{
+                    viewModel.getAllOrders()
+                    viewModel.getmasterOrder()
+                }
+            })
             .sheet(isPresented: $showSheet, content: {
                 ScrollView(.vertical, showsIndicators: false){
                     
@@ -154,9 +304,12 @@ struct ContentView: View {
                                     Text("Торт: \(order.name!)")
                                     
                                     Text("Статус заказа: \(order.statusOrder)")
+                                   
+                                    Text("Можно забрать: \(tezt(londf: order.presumptiveDate))")
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .cornerRadius(20)
                         }
                         .padding()
                         
@@ -169,6 +322,13 @@ struct ContentView: View {
             })
             
 	}
+    
+    func tezt(londf: Int64) -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy"
+        let dateVar = Date.init(timeIntervalSinceNow: TimeInterval(londf / 1000))
+        return dateFormatter.string(from: dateVar)
+    }
   
 }
 

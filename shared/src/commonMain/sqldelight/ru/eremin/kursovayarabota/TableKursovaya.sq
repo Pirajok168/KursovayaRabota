@@ -46,7 +46,33 @@ CREATE TABLE Client(
     mail TEXT
 );
 
+getOrderById:
+    SELECT * FROM Orders WHERE idOrder = ?;
 
+replaceOrder:
+    INSERT OR REPLACE INTO Orders(idOrder, registrationDate, presumptiveDate,idModel,idClient,costOrder,prepayment,statusOrder)
+           VALUES (?,?,?,?,?,?,?,?);
+
+replaceCake:
+    INSERT OR REPLACE INTO Model(idModel, cost, weight, productionTime, name, type, patch)
+        VALUES (?,?,?,?,?,?,?);
+
+getCakesById:
+    SELECT * FROM Model WHERE idModel = (:idModel);
+
+allOrders:
+    SELECT * FROM Orders o
+        LEFT JOIN Model m ON o.idModel = m.idModel
+        LEFT JOIN Client c ON o.idClient = c.idClient;
+
+showAllMaster:
+    SELECT * FROM Master;
+
+getMasterOrders:
+    SELECT * FROM MasrerOrder  m
+        LEFT JOIN Master mas ON m.idMaster = mas.idMaster
+        LEFT JOIN Orders o ON o.idOrder = m.idOrder
+        LEFT JOIN Model mod ON mod.idModel = o.idModel;
 
 auth:
     SELECT * FROM Client WHERE phoneNumber == (:phone) AND mail == (:mail);
@@ -63,7 +89,7 @@ createCake:
         VALUES (?,?,?,?,?,?,?);
 
 showCakeByCost:
-    SELECT * FROM Model WHERE cost == (:cost);
+    SELECT * FROM Model WHERE cost BETWEEN 0 AND (:max);
 
 showOrdesByDate:
     SELECT * FROM Orders o
