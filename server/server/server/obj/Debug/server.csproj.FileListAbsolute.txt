@@ -1,0 +1,8 @@
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\bin\Debug\server.exe.config
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\bin\Debug\server.exe
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\bin\Debug\server.pdb
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\obj\Debug\server.csproj.AssemblyReference.cache
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\obj\Debug\server.csproj.SuggestedBindingRedirects.cache
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\obj\Debug\server.csproj.CoreCompileInputs.cache
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\obj\Debug\server.exe
+C:\Users\danil\AndroidStudioProjects\KursovayaRabota\server\server\server\obj\Debug\server.pdb
