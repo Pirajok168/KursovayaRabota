@@ -1,6 +1,7 @@
 package ru.eremin.kursovayarabota.android
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -18,9 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.launch
 import ru.eremin.kursovayarabota.KursovayaSDK
-import ru.eremin.kursovayarabota.datasources.db.ContextApplication
 import ru.eremin.kursovayarabota.datasources.di.dialogChatModule
-import ru.eremin.kursovayarabota.datasources.repo.TypeCake
+
 
 @Composable
 fun MyApplicationTheme(
@@ -73,21 +73,15 @@ class ViewModelDatabase(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ContextApplication.init(this)
+
         setContent {
             MyApplicationTheme {
                 val scope = rememberCoroutineScope()
                 Button(onClick = {
-                    val repo = KursovayaSDK.dialogChatModule.repo
+                    val repo = KursovayaSDK.dialogChatModule.update
                     scope.launch {
-                        repo.createClient(5, "1", "1", "1", "1", "1")
-                        repo.createCake()
-                        val a = repo.showAllCake(TypeCake.Milk)
-                        repo.createOrder(5, a.first(), 0)
-
-                        val b = repo.showOrdersByIndividualClient(5)
-
-                        b
+                        val a = repo.showMaster()
+                        Log.e("cake", a.toString())
                     }
 
 

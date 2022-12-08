@@ -5,24 +5,18 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import ru.eremin.kursovayarabota.KursovayaSDK
-import ru.eremin.kursovayarabota.datasources.db.DAO
-import ru.eremin.kursovayarabota.datasources.db.Database
-import ru.eremin.kursovayarabota.datasources.db.databaseFactory
-import ru.eremin.kursovayarabota.datasources.repo.IRepository
-import ru.eremin.kursovayarabota.datasources.repo.Repository
+import ru.eremin.kursovayarabota.datasources.api.ApiClient
+import ru.eremin.kursovayarabota.datasources.api.IApi
+import ru.eremin.kursovayarabota.datasources.api.getHttpEngineFactory
 import kotlin.native.concurrent.ThreadLocal
 
 
 internal val databaseModule = DI.Module("DatabaseModule") {
-    bind<DAO>() with singleton {
-        Database(
-            driver = databaseFactory().sqlDriver
-        )
-    }
 
-    bind<IRepository>() with singleton {
-        Repository(
-            dao = instance()
+
+    bind<IApi>() with singleton {
+        ApiClient(
+            getHttpEngineFactory().engine
         )
     }
 
@@ -30,10 +24,10 @@ internal val databaseModule = DI.Module("DatabaseModule") {
 
 @ThreadLocal
 object DatabaseModule {
-    val repo: IRepository
+
+
+    val update: IApi
         get() = KursovayaSDK.di.instance()
-
-
 }
 
 val KursovayaSDK.dialogChatModule: DatabaseModule
