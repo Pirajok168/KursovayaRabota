@@ -240,7 +240,7 @@ def getMasterOrders():
                         f"\"cost\":\"{row[16]}\"," \
                         f"\"weight\":\"{row[17]}\"," \
                         f"\"productionTime\":\"{row[18]}\"," \
-                        f"\"name\":\"{row[19]}\"," \
+                        f"\"name_\":\"{row[19]}\"," \
                         f"\"type\":\"{row[20]}\"," \
                         f"\"patch\":\"{row[21]}\""
             response += "},"
