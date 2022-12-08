@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 class AuthViewModel: ObservableObject{
-    private let repo: IRepository = KursovayaSDK().dialogChatModule.repo
+    private let repo: IApi = KursovayaSDK().dialogChatModule.update
     
     @Published var name: String = ""
     
@@ -25,26 +25,27 @@ class AuthViewModel: ObservableObject{
     @Published var id: Int = 0
     
     func auth(){
-        repo.auth(phoneNumber: phoneNumber, email: emain, completionHandler: {
+        repo.auth(number: phoneNumber, email: emain, completionHandler: {
             (client, error) in
             if client == nil {
                 withAnimation{
                     self.errrr = true
                 }
-                
             }else{
-                self.id = Int(client!.idClient)
+                self.id = Int(client!.idClient)!
                 self.isClietExists = true
             }
         })
+        
+    
     }
     
     func client(  f: @escaping () -> Void ){
-        id = Int.random(in: 0...100)
-        repo.createClient(id: Int64(id), surname: surname, name: name, lastname: lastname, phoneNumber: phoneNumber, mail: emain, completionHandler: {
-            _ in
-        })
-        f()
+//        id = Int.random(in: 0...100)
+//        repo.createClient(id: Int64(id), surname: surname, name: name, lastname: lastname, phoneNumber: phoneNumber, mail: emain, completionHandler: {
+//            _ in
+//        })
+//        f()
     }
 }
 

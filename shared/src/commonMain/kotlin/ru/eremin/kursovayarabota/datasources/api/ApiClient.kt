@@ -1,5 +1,7 @@
 package ru.eremin.kursovayarabota.datasources.api
 
+import com.soywiz.klock.Date
+import com.soywiz.klock.DateTime
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -22,15 +24,17 @@ interface IApi{
     suspend fun auth(number: String, email: String): Client?
     suspend fun getCake(): List<Cakes>
 
-    suspend fun showCakeByCost(cost: Int): List<Cakes>
+    suspend fun showCakeByCost(cost: String): List<Cakes>
 
-    suspend fun showOrderByIndividualClient(idClient: Int): List<OrderForClient>
+    suspend fun showOrderByIndividualClient(idClient: String): List<OrderForClient>
 
-    suspend fun assignment(idMaster: Int, idOrder: Int)
+    suspend fun assignmentMaster(idMaster: String, idOrder: String)
 
     suspend fun showOrder(): List<Orders>
 
     suspend fun showMaster(): List<Master>
+
+    suspend fun createOrder(idModel: String, idClient: String, cost: String)
 
     suspend fun getMasterOrders(): List<MasterOrders>
 }
@@ -80,7 +84,7 @@ class ApiClient(
         }.decodeFromString(text)
     }
 
-    override suspend fun showCakeByCost(cost: Int): List<Cakes> {
+    override suspend fun showCakeByCost(cost: String): List<Cakes> {
         val text = httpClient.get("${BASE}/showCakeByCost") {
             url {
                 parameter("cost", cost.toString())
@@ -93,7 +97,7 @@ class ApiClient(
         }.decodeFromString(text)
     }
 
-    override suspend fun showOrderByIndividualClient(idClient: Int): List<OrderForClient> {
+    override suspend fun showOrderByIndividualClient(idClient: String): List<OrderForClient> {
         val text = httpClient.get("${BASE}/showOrderByIndividualClient") {
             url {
                 parameter("idClient", idClient.toString())
@@ -106,7 +110,7 @@ class ApiClient(
         }.decodeFromString(text)
     }
 
-    override suspend fun assignment(idMaster: Int, idOrder: Int) {
+    override suspend fun assignmentMaster(idMaster: String, idOrder: String) {
         httpClient.get("${BASE}/assignment"){
             url {
                 parameter("idMaster", idMaster.toString())
@@ -137,6 +141,19 @@ class ApiClient(
         }.decodeFromString(text)
     }
 
+    override suspend fun createOrder(idModel: String, idClient: String, cost: String) {
+        val registrationDate = DateTime.now().unixMillisLong.toString()
+        val presumptiveDate = DateTime.now().unixMillisLong.toString()
+        httpClient.get("${BASE}/createOrder"){
+            url {
+                parameter("idModel", idModel)
+                parameter("idClient", idClient)
+                parameter("cost", cost)
+                parameter("registrationDate", registrationDate)
+                parameter("presumptiveDate", presumptiveDate)
+            }
+        }
+    }
     override suspend fun getMasterOrders(): List<MasterOrders> {
         val text = httpClient.get("${BASE}/getMasterOrders") {
             url {
@@ -149,4 +166,5 @@ class ApiClient(
             ignoreUnknownKeys = true
         }.decodeFromString(text)
     }
+
 }

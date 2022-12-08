@@ -17,6 +17,7 @@ data class MasterOrders(
     val prepayment: String,
     val presumptiveDate: String,
     val productionTime: String,
+    val name_: String,
     val registrationOrder: String,
     val salary: String,
     val statusOrder: String,

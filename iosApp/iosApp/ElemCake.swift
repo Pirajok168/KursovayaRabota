@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct BasketElem: View{
-    let cake: Model
+    let cake: Cakes
   
     var body: some View{
         ZStack{
@@ -75,7 +75,7 @@ struct BasketElem: View{
 struct ElemCake: View{
     
     
-    let cake: Model
+    let cake: Cakes
    
    
     

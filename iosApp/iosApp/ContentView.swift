@@ -38,11 +38,7 @@ struct ContentView: View {
         
             
             ScrollView(.vertical){
-                Button(action: {
-                    viewModel.createCake()
-                }, label: {
-                    Text("0 .. \(viewModel.slide)")
-                })
+                
                 Text("0 .. \(viewModel.slide)")
                 
                 
@@ -60,33 +56,13 @@ struct ContentView: View {
                         viewModel.showByCost()
                     }
                 .padding()
-                
-                ScrollView(.horizontal, showsIndicators: false){
-                    LazyHStack{
-                        ForEach(cakes, id: \.self){ cake in
-                            TypeCakeView(title: cake, isPressed: pressed == cake)
-                                .padding()
-                                .onTapGesture {
-                                    withAnimation{
-                                        pressed = cake
-                                        switch cake {
-                                        case "Фруктовые": viewModel.showCake(typeCake: TypeCake.fruits )
-                                        case "С молоком": viewModel.showCake(typeCake: TypeCake.milk )
-                                        case "Шоколадные": viewModel.showCake(typeCake: TypeCake.chocolate )
-                                        default:
-                                            print("Error")
-                                        }
-                                        
-                                    }
-                                }
-                            
-                        }
-                    }
-                    .padding(.horizontal)
-                    
+                .onAppear{
+                    viewModel.showCake()
                 }
                 
-                ForEach(viewModel.previewCakes, id: \.self){
+               
+                
+                ForEach(viewModel.cakes, id: \.self){
                     _cake in
                     ElemCake(cake: _cake)
                         .padding()
@@ -134,7 +110,7 @@ struct ContentView: View {
                             order in
                             HStack{
                                 
-                                AsyncImage(url: URL(string: order.patch!), content: {
+                                AsyncImage(url: URL(string: order.patch), content: {
                                     image in
                                     
                                     image
@@ -148,16 +124,16 @@ struct ContentView: View {
                                 })
                                 .frame(width: 160, height: 180)
                                 Button(action: {
-                                    idOrder = Int(order.idOrder)
-                                    idModel = Int(order.idModel_!)
+                                    idOrder = Int(order.idOrder)!
+                                    idModel = Int(order.idModel_)!
                                     master.toggle()
                                 }, label: {
                                     VStack{
-                                        Text("Клиент: \(order.surname!) \(order.name_!) \(order.lastname!)")
+                                        Text("Клиент: \(order.surname) \(order.name_) \(order.lastname)")
                                             .frame(maxWidth: .infinity,  alignment: .leading)
-                                        Text("Модель торта: \(order.name!)")
+                                        Text("Модель торта: \(order.name)")
                                             .frame(maxWidth: .infinity,  alignment: .leading)
-                                        Text("Номер телефона клиента \(order.phoneNumber!)")
+                                        Text("Номер телефона клиента \(order.phoneNumber)")
                                             .frame(maxWidth: .infinity,  alignment: .leading)
                                         Text("Статус \(order.statusOrder)")
                                             .frame(maxWidth: .infinity,  alignment: .leading)
@@ -190,7 +166,7 @@ struct ContentView: View {
                                         
                                     }
                                     .onTapGesture {
-                                        viewModel.assignmentMaster(idMaster: master.idMaster, idOrders: self.idOrder, idModel: self.idModel)
+                                        viewModel.assignmentMaster(idMaster: "\(master.idMaster)", idOrders: "\(self.idOrder)")
                                     }
                                     .padding()
                                     
@@ -219,12 +195,12 @@ struct ContentView: View {
                               master in
                               
                               VStack{
-                                  Text("ФИО \(master.surname!) \(master.name!) \(master.lastname!)")
+                                  Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
-                                  Text("Торт \(master.name_!)")
+                                  Text("Торт \(master.name)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
-                                  Text("Статус \(master.statusOrder!)")
+                                  Text("Статус \(master.statusOrder)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
 
                               }
@@ -283,7 +259,7 @@ struct ContentView: View {
                             order in
                             
                             HStack{
-                                AsyncImage(url: URL(string: order.patch!), content: {
+                                AsyncImage(url: URL(string: order.patch), content: {
                                     image in
                                     
                                     image
@@ -301,11 +277,11 @@ struct ContentView: View {
                                 .frame(width: 160, height: 180)
                              
                                 VStack(alignment: .leading){
-                                    Text("Торт: \(order.name!)")
+                                    Text("Торт: \(order.name)")
                                     
                                     Text("Статус заказа: \(order.statusOrder)")
                                    
-                                    Text("Можно забрать: \(tezt(londf: order.presumptiveDate))")
+                                    Text("Можно забрать: ")
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)

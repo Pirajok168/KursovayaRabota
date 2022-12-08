@@ -11,52 +11,57 @@ import shared
 
 
 class ViewModel: ObservableObject{
-    private let repo: IRepository = KursovayaSDK().dialogChatModule.repo
-    @Published var cakes: [Model] = []
+    private let repo: IApi = KursovayaSDK().dialogChatModule.update
+    @Published var cakes: [Cakes] = []
     
-    @Published var previewCakes: [Model] = []
     
-    @Published var selectedCake: Model? = nil
+    
+    @Published var selectedCake: Cakes? = nil
        
-    @Published var orders: [ShowOrdersByIndividualClient] = []
+    @Published var orders: [OrderForClient] = []
     
     @Published var slide: Float = 13000.0
     
-    @Published var typeCake: TypeCake = .fruits
     
-    @Published var allOrders: [AllOrders] = []
+    @Published var allOrders: [Orders_] = []
     
-    @Published var masters: [Master] = []
+    @Published var masters: [Master_] = []
     
-    @Published var masterOrder: [GetMasterOrders] = []
+    @Published var masterOrder: [MasterOrders] = []
     
     var id: Int = 0
     
+    func chooiseCake(cake: Cakes){
+        self.selectedCake = cake
+    }
+    
     func getmasterOrder(){
+        
+        
         repo.getMasterOrders(completionHandler: {
             matserOrdes, _ in
             self.masterOrder = matserOrdes ?? []
         })
     }
     
-    func assignmentMaster(idMaster: Int64, idOrders: Int, idModel: Int){
-        repo.assignmentMaster(idMaster: Int32(idMaster), idOrder: Int64(idOrders),idModel: Int64(idModel), completionHandler: {
-            error in
+    func assignmentMaster(idMaster: String, idOrders: String){
+        repo.assignmentMaster(idMaster: idMaster, idOrder: idOrders, completionHandler: {
+            _ in
         })
+       
     }
     
     func getAllMaster(){
-        repo.showAllMaster(completionHandler: {
+        repo.showMaster(completionHandler: {
             master, error in
             self.masters = master ?? []
         })
     }
     
     func getAllOrders(){
-        repo.showAllOrders(completionHandler: {
-            allOrders, error in
-            self.allOrders = allOrders ?? []
-        })
+        repo.showOrder { orders, error in
+            self.allOrders = orders ?? []
+        }
     }
     
     func wq(ee: Int){
@@ -64,58 +69,39 @@ class ViewModel: ObservableObject{
     }
     
     func showByCost(){
-        repo.showCakeByCost(cost: Int32(Int(slide)), completionHandler: {
+        repo.showCakeByCost(cost: "\(Int(slide))", completionHandler: {
             model, error in
             self.cakes = model ?? []
-            self.previewCakes = self.cakes.filter({
-                model in
-                model.type == self.typeCake.name
-            })
         })
+        
+        
+        
     }
     
     func getOrders(){
-        repo.showOrdersByIndividualClient(idClient: Int64(id), completionHandler: {
-            orders, error in
-        
+        repo.showOrderByIndividualClient(idClient: "\(id)") {orders, error in
+            
             self.orders = orders ?? []
-           
-        })
+        }
+        
     }
     
     func createOrder(){
-        repo.createOrder(id:  Int64(id), cakes: self.selectedCake!, idClient: Int64(id), completionHandler: {
-            error in
-            
-        })
-    }
-    
-    func chooiseCake(cake: Model){
-        self.selectedCake = cake
-    }
-   
-    func createCake(){
-        repo.createCake(completionHandler: {_ in
-            
-        })
+        let idModel = self.selectedCake?.idModel
+        let cost = self.selectedCake?.cost
         
-        repo.createMaster(completionHandler: {
+        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: cost!, completionHandler: {
             _ in
         })
-        
-        repo.showAllCake(typeCake: TypeCake.fruits, completionHandler: {
-            (model, error) in
-            self.cakes = model ?? []
-        }
-        )
+
     }
     
-    func showCake(typeCake: TypeCake){
-        self.typeCake = typeCake
-        previewCakes = cakes.filter({
-            model in
-            model.type == typeCake.name
-        })
+    
+    
+    func showCake(){
+        repo.getCake { cakes, _ in
+            self.cakes = cakes ?? []
+        }
     }
     
    
