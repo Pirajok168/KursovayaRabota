@@ -31,6 +31,8 @@ interface IApi{
     suspend fun showOrder(): List<Orders>
 
     suspend fun showMaster(): List<Master>
+
+    suspend fun getMasterOrders(): List<MasterOrders>
 }
 
 const val BASE = "http://192.168.100.4:8000"
@@ -127,6 +129,19 @@ class ApiClient(
     override suspend fun showMaster(): List<Master> {
         val text = httpClient.get("${BASE}/showMaster") {
 
+        }.bodyAsText()
+        return Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        }.decodeFromString(text)
+    }
+
+    override suspend fun getMasterOrders(): List<MasterOrders> {
+        val text = httpClient.get("${BASE}/getMasterOrders") {
+            url {
+
+            }
         }.bodyAsText()
         return Json {
             prettyPrint = true

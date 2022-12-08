@@ -208,5 +208,49 @@ def showMaster():
     return "Ok"
 
 
+@app.route('/getMasterOrders', methods=['GET'])
+def getMasterOrders():
+    with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
+        cursor = db.cursor()
+        id = random.randint(0, 30000)
+        query = f""" SELECT * FROM MasrerOrder m
+        LEFT JOIN Master mas ON m.idMaster = mas.idMaster
+        LEFT JOIN Orders o ON o.idOrder = m.idOrder
+        LEFT JOIN Model mod ON mod.idModel = o.idModel """
+        cursor.execute(query)
+        response = '['
+        for row in cursor.fetchall():
+            response += "{"
+            response += f"\"idMaster\":\"{row[0]}\"," \
+                        f"\"idOrder\":\"{row[1]}\"," \
+                        f"\"idMaster\":\"{row[2]}\"," \
+                        f"\"surname\":\"{row[3]}\"," \
+                        f"\"name\":\"{row[4]}\"," \
+                        f"\"lastname\":\"{row[5]}\"," \
+                        f"\"salary\":\"{row[6]}\"," \
+                        f"\"idOrder\":\"{row[7]}\"," \
+                        f"\"registrationOrder\":\"{row[8]}\"," \
+                        f"\"presumptiveDate\":\"{row[9]}\"," \
+                        f"\"idModel\":\"{row[10]}\"," \
+                        f"\"idClient\":\"{row[11]}\"," \
+                        f"\"costOrder\":\"{row[12]}\"," \
+                        f"\"prepayment\":\"{row[13]}\"," \
+                        f"\"statusOrder\":\"{row[14]}\"," \
+                        f"\"idModel\":\"{row[15]}\"," \
+                        f"\"cost\":\"{row[16]}\"," \
+                        f"\"weight\":\"{row[17]}\"," \
+                        f"\"productionTime\":\"{row[18]}\"," \
+                        f"\"name\":\"{row[19]}\"," \
+                        f"\"type\":\"{row[20]}\"," \
+                        f"\"patch\":\"{row[21]}\""
+            response += "},"
+        response = response[:-1]
+        response += "]"
+        print(response)
+        return response
+    return "Ok"
+
+
+
 if __name__ == "__main__":
     app.run(host='192.168.100.4', port=8000)
