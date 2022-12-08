@@ -47,7 +47,7 @@ def getCake():
                         f'\"productionTime\":\"{row[3]}\",' \
                         f'\"name\":\"{row[4]}\",' \
                         f'\"type\":\"{row[5]}\",' \
-                        f'\"idModel\":\"{row[6]}\"'
+                        f'\"patch\":\"{row[6]}\"'
 
             response += "},"
         response = response[:-1]
@@ -72,7 +72,7 @@ def showCakeByCost():
                         f'\"productionTime\":\"{row[3]}\",' \
                         f'\"name\":\"{row[4]}\",' \
                         f'\"type\":\"{row[5]}\",' \
-                        f'\"idModel\":\"{row[6]}\"'
+                        f'\"patch\":\"{row[6]}\"'
 
             response += "},"
         response = response[:-1]

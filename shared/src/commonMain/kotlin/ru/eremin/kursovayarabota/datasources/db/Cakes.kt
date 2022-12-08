@@ -10,5 +10,6 @@ data class Cakes(
     val name: String,
     val productionTime: String,
     val type: String,
-    val weight: String
+    val weight: String,
+    val patch: String
 )
