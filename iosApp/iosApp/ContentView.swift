@@ -197,7 +197,7 @@ struct ContentView: View {
                               VStack{
                                   Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
-                                  Text("Торт \(master.name)")
+                                  Text("Торт \(master.name_)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
                                   Text("Статус \(master.statusOrder)")
