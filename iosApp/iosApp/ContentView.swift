@@ -281,7 +281,7 @@ struct ContentView: View {
                                     
                                     Text("Статус заказа: \(order.statusOrder)")
                                    
-                                    Text("Можно забрать: ")
+                                    Text("Можно забрать: \(order.presumptiveDate)")
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)

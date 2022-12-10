@@ -90,7 +90,7 @@ class ViewModel: ObservableObject{
         let idModel = self.selectedCake?.idModel
         let cost = self.selectedCake?.cost
         
-        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: cost!, completionHandler: {
+        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: cost!, time: Int32(self.selectedCake!.productionTime)!, completionHandler: {
             _ in
         })
 

@@ -1,7 +1,8 @@
 package ru.eremin.kursovayarabota.datasources.api
 
-import com.soywiz.klock.Date
+import com.soywiz.klock.DateFormat
 import com.soywiz.klock.DateTime
+import com.soywiz.klock.days
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -34,12 +35,12 @@ interface IApi{
 
     suspend fun showMaster(): List<Master>
 
-    suspend fun createOrder(idModel: String, idClient: String, cost: String)
+    suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int)
 
     suspend fun getMasterOrders(): List<MasterOrders>
 }
 
-const val BASE = "http://192.168.100.4:8000"
+const val BASE = "http://192.168.100.4:8008"
 
 class ApiClient(
     engine: HttpClientEngineFactory<HttpClientEngineConfig>
@@ -77,11 +78,15 @@ class ApiClient(
 
     override suspend fun getCake(): List<Cakes> {
         val text = httpClient.get("${BASE}/getCake").bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return  try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        }catch (e :SerializationException){
+            emptyList<Cakes>()
+        }
     }
 
     override suspend fun showCakeByCost(cost: String): List<Cakes> {
@@ -90,11 +95,15 @@ class ApiClient(
                 parameter("cost", cost.toString())
             }
         }.bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<Cakes>()
+        }
     }
 
     override suspend fun showOrderByIndividualClient(idClient: String): List<OrderForClient> {
@@ -103,11 +112,15 @@ class ApiClient(
                 parameter("idClient", idClient.toString())
             }
         }.bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<OrderForClient>()
+        }
     }
 
     override suspend fun assignmentMaster(idMaster: String, idOrder: String) {
@@ -123,27 +136,36 @@ class ApiClient(
         val text = httpClient.get("${BASE}/showOrder") {
 
         }.bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<Orders>()
+        }
     }
 
     override suspend fun showMaster(): List<Master> {
         val text = httpClient.get("${BASE}/showMaster") {
 
         }.bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<Master>()
+        }
     }
 
-    override suspend fun createOrder(idModel: String, idClient: String, cost: String) {
-        val registrationDate = DateTime.now().unixMillisLong.toString()
-        val presumptiveDate = DateTime.now().unixMillisLong.toString()
+    override suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int) {
+        val dateFormat = DateFormat("EEE, dd MM yyyy HH:mm")
+        val registrationDate = DateTime.now().format(dateFormat)
+        val presumptiveDate = DateTime.now().plus(time.days).format(dateFormat)
         httpClient.get("${BASE}/createOrder"){
             url {
                 parameter("idModel", idModel)
@@ -160,11 +182,15 @@ class ApiClient(
 
             }
         }.bodyAsText()
-        return Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }.decodeFromString(text)
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<MasterOrders>()
+        }
     }
 
 }
