@@ -29,7 +29,7 @@ interface IApi{
 
     suspend fun showOrderByIndividualClient(idClient: String): List<OrderForClient>
 
-    suspend fun assignmentMaster(idMaster: String, idOrder: String)
+    suspend fun assignmentMaster(idMaster: String, idOrder: String, status: String, date: String)
 
     suspend fun showOrder(): List<Orders>
 
@@ -123,11 +123,18 @@ class ApiClient(
         }
     }
 
-    override suspend fun assignmentMaster(idMaster: String, idOrder: String) {
+    override suspend fun assignmentMaster(
+        idMaster: String,
+        idOrder: String,
+        status: String,
+        date: String
+    ) {
         httpClient.get("${BASE}/assignment"){
             url {
                 parameter("idMaster", idMaster.toString())
                 parameter("idOrder", idOrder.toString())
+                parameter("status", status.toString())
+                parameter("date", date.toString())
             }
         }
     }
@@ -182,7 +189,7 @@ class ApiClient(
                 parameter("idClient", idClient)
                 parameter("cost", cost)
                 parameter("registrationDate", registrationDate)
-                parameter("presumptiveDate", "")
+                parameter("presumptiveDate", presumptiveDate)
                 parameter("idOrder", idOrder)
                 parameter("prepayment", prepayment)
                 parameter("status", statusOrder)

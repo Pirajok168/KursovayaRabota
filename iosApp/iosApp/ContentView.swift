@@ -134,6 +134,7 @@ struct ContentView: View {
                                     viewModel.modelCake = order.name
                                     viewModel.cost = order.cost
                                     viewModel.prepayment = order.prepayment
+                                    viewModel.presumptiveDate = order.presumptiveDate
                                     idOrder = Int(order.idOrder)!
                                     idModel = Int(order.idModel_)!
                                     master.toggle()
@@ -262,6 +263,14 @@ struct ContentView: View {
                                 })
                                
                                 
+                                Button(action: {
+                                    viewModel.assignmentMaster(idMaster: viewModel.idMaster, idOrders: viewModel.idOrderAssigh)
+                                    showSS.toggle()
+                                    
+                                }, label: {
+                                    Text("Назначить мастера")
+                                        .frame(maxWidth: .infinity)
+                                })
                                 
                             }
                             .textFieldStyle(.roundedBorder)
@@ -332,13 +341,16 @@ struct ContentView: View {
                         TextField("", text: $viewModel.cost)
                         
                         TextField("дата заказа", text: $viewModel.registrationDate)
-                    
                         
-                        TextField("", text: $viewModel.idModel)
+                        TextField("Примерная дата готовности", text: $viewModel.presumptiveDate)
+                    
+                        Text("Время готовки торта - \(viewModel.day) дня")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                       
                         
                         TextField("Статус заказа", text: $viewModel.statusOrder)
                             
-                        //BasketElem(cake: viewModel.selectedCake!)
+                        
                         
                     }, header: {
                         Text("Корзина")
