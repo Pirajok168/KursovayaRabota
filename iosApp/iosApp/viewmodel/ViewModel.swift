@@ -17,6 +17,14 @@ class ViewModel: ObservableObject{
     
     
     @Published var selectedCake: Cakes? = nil
+    @Published var nameCake: String = ""
+    @Published var registrationDate: String = ""
+    @Published var cost: String = ""
+    @Published var idModel: String = ""
+    @Published var statusOrder: String = ""
+    @Published var idOrder: String = ""
+    @Published var prepayment: String = ""
+    @Published var day: String = ""
        
     @Published var orders: [OrderForClient] = []
     
@@ -29,10 +37,29 @@ class ViewModel: ObservableObject{
     
     @Published var masterOrder: [MasterOrders] = []
     
-    var id: Int = 0
+    @Published var id: String = ""
+    
+    @Published var idMaster = ""
+    @Published var FIO = ""
+    @Published var salary = ""
+    @Published var idOrderAssigh = ""
+    @Published var cakeAssign: Orders_? = nil
+    @Published var FIOClient = ""
+    @Published var presumptiveDate = ""
+    @Published var numberClient = ""
+    @Published var modelCake = ""
     
     func chooiseCake(cake: Cakes){
         self.selectedCake = cake
+        self.nameCake = cake.name
+        self.cost = cake.cost
+        self.idModel = cake.idModel
+        self.statusOrder = ""
+        self.presumptiveDate = ""
+        self.registrationDate = ""
+        self.prepayment = ""
+        self.idOrder = ""
+        self.day = cake.productionTime
     }
     
     func getmasterOrder(){
@@ -45,7 +72,7 @@ class ViewModel: ObservableObject{
     }
     
     func assignmentMaster(idMaster: String, idOrders: String){
-        repo.assignmentMaster(idMaster: idMaster, idOrder: idOrders, completionHandler: {
+        repo.assignmentMaster(idMaster: idMaster, idOrder: idOrders, status: self.statusOrder, date: self.presumptiveDate, completionHandler: {
             _ in
         })
        
@@ -65,7 +92,7 @@ class ViewModel: ObservableObject{
     }
     
     func wq(ee: Int){
-        id = ee
+        id = String(ee)
     }
     
     func showByCost(){
@@ -88,11 +115,15 @@ class ViewModel: ObservableObject{
     
     func createOrder(){
         let idModel = self.selectedCake?.idModel
-        let cost = self.selectedCake?.cost
+        let cost = (self.selectedCake?.cost)!
+        let a = Int(cost)!
+        let b = Int(prepayment)!
         
-        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: cost!, completionHandler: {
+        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: "\(a + b)", time: Int32(self.selectedCake!.productionTime)!, idOrder: self.idOrder, registrationDate: self.registrationDate, statusOrder: self.statusOrder, presumptiveDate: self.presumptiveDate,prepayment: self.prepayment, completionHandler: {
             _ in
         })
+        
+       
 
     }
     

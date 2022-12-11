@@ -77,7 +77,11 @@ struct ElemCake: View{
     
     let cake: Cakes
    
-   
+    init(cake: Cakes) {
+        self.cake = cake
+        print(cake)
+    }
+    
     
     
     var body: some View{
@@ -117,9 +121,12 @@ struct ElemCake: View{
                     
                     Text("Стоимость: \(cake.cost) ₽")
                         .padding(.horizontal)
+                    
+                    Text("Тип: \(cake.type)")
+                        .padding(.horizontal)
                         
                     
-                    Text("Вес: \(String(format: "%.2f", cake.weight)) грамм")
+                    Text("Вес: \(cake.weight) грамм")
                         .padding(.horizontal)
                         .padding(.bottom)
                     
