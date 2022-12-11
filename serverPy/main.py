@@ -121,11 +121,17 @@ def createOrder():
     cost = request.args.get('cost')
     registrationDate = request.args.get('registrationDate')
     presumptiveDate = request.args.get('presumptiveDate')
+    id = request.args.get('idOrder')
+    prepayment = request.args.get('prepayment')
+    status = request.args.get('status')
     with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
         cursor = db.cursor()
-        id = random.randint(0, 30000)
-        query = f""" INSERT INTO Orders VALUES('{id}', '{registrationDate}', '{presumptiveDate}', '{idModel}', '{idClient}', '{cost}', '{0}', \'Принят\') """
+
+        query = f""" INSERT INTO Orders VALUES('{id}', '{registrationDate}', '{presumptiveDate}', '{idModel}', '{idClient}', '{cost}', '{prepayment}', '{status}') """
         cursor.execute(query)
+
+
+
 
     return "Ok"
 
@@ -134,12 +140,18 @@ def createOrder():
 def assignment():
     idMaster = request.args.get('idMaster')
     idOrder = request.args.get('idOrder')
-
+    status = request.args.get('status')
+    date = request.args.get('date')
     with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
         cursor = db.cursor()
         id = random.randint(0, 30000)
         query = f""" INSERT INTO MasrerOrder(idMaster, idOrder) VALUES ('{idMaster}', '{idOrder}') """
         cursor.execute(query)
+
+        query = f""" update Orders set statusOrder='{status}' where idOrder = '{idOrder}' """
+        cursor.execute(query)
+
+
 
     return "Ok"
 
@@ -253,4 +265,4 @@ def getMasterOrders():
 
 
 if __name__ == "__main__":
-    app.run(host='192.168.100.4', port=8000)
+    app.run(host='192.168.100.4', port=8008)
