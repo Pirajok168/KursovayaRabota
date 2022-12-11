@@ -17,6 +17,13 @@ class ViewModel: ObservableObject{
     
     
     @Published var selectedCake: Cakes? = nil
+    @Published var nameCake: String = ""
+    @Published var registrationDate: String = ""
+    @Published var cost: String = ""
+    @Published var idModel: String = ""
+    @Published var statusOrder: String = ""
+    @Published var idOrder: String = ""
+    @Published var prepayment: String = ""
        
     @Published var orders: [OrderForClient] = []
     
@@ -29,10 +36,14 @@ class ViewModel: ObservableObject{
     
     @Published var masterOrder: [MasterOrders] = []
     
-    var id: Int = 0
+    @Published var id: String = ""
     
     func chooiseCake(cake: Cakes){
         self.selectedCake = cake
+        self.nameCake = cake.name
+        self.cost = cake.cost
+        self.idModel = cake.idModel
+    
     }
     
     func getmasterOrder(){
@@ -65,7 +76,7 @@ class ViewModel: ObservableObject{
     }
     
     func wq(ee: Int){
-        id = ee
+        id = String(ee)
     }
     
     func showByCost(){
@@ -88,11 +99,15 @@ class ViewModel: ObservableObject{
     
     func createOrder(){
         let idModel = self.selectedCake?.idModel
-        let cost = self.selectedCake?.cost
+        let cost = (self.selectedCake?.cost)!
+        let a = Int(cost)!
+        let b = Int(prepayment)!
         
-        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: cost!, time: Int32(self.selectedCake!.productionTime)!, completionHandler: {
+        repo.createOrder(idModel: idModel!, idClient: "\(id)", cost: "\(a + b)", time: Int32(self.selectedCake!.productionTime)!, idOrder: self.idOrder, registrationDate: self.registrationDate, statusOrder: self.statusOrder, presumptiveDate: "",prepayment: self.prepayment, completionHandler: {
             _ in
         })
+        
+       
 
     }
     

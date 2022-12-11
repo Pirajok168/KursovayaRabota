@@ -35,7 +35,7 @@ interface IApi{
 
     suspend fun showMaster(): List<Master>
 
-    suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int)
+    suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int, idOrder: String, registrationDate: String, statusOrder: String, presumptiveDate: String, prepayment: String)
 
     suspend fun getMasterOrders(): List<MasterOrders>
 }
@@ -162,17 +162,30 @@ class ApiClient(
         }
     }
 
-    override suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int) {
+    override suspend fun createOrder(
+        idModel: String,
+        idClient: String,
+        cost: String,
+        time: Int,
+        idOrder: String,
+        registrationDate: String,
+        statusOrder: String,
+        presumptiveDate: String,
+        prepayment: String
+    ) {
         val dateFormat = DateFormat("EEE, dd MM yyyy HH:mm")
-        val registrationDate = DateTime.now().format(dateFormat)
-        val presumptiveDate = DateTime.now().plus(time.days).format(dateFormat)
+      //  val registrationDate = DateTime.now().format(dateFormat)
+        val _presumptiveDate = DateTime.now().plus(time.days).format(dateFormat)
         httpClient.get("${BASE}/createOrder"){
             url {
                 parameter("idModel", idModel)
                 parameter("idClient", idClient)
                 parameter("cost", cost)
                 parameter("registrationDate", registrationDate)
-                parameter("presumptiveDate", presumptiveDate)
+                parameter("presumptiveDate", "")
+                parameter("idOrder", idOrder)
+                parameter("prepayment", prepayment)
+                parameter("status", statusOrder)
             }
         }
     }

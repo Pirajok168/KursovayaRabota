@@ -195,8 +195,12 @@ struct ContentView: View {
                               master in
                               
                               VStack{
-                                  Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
+                                  Text("ФИО мастера \(master.surname) \(master.name) \(master.lastname)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Id client \(master.idClient)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
                                   Text("Торт \(master.name_)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
@@ -224,16 +228,35 @@ struct ContentView: View {
             .sheet(isPresented: $showSheet, content: {
                 ScrollView(.vertical, showsIndicators: false){
                     
+                    
                     Section(content: {
                       
-                         
+                        TextField("ID заказа", text: $viewModel.idOrder)
+                        
+                        Text("ID Клиента")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        TextField("ID заказа", text: $viewModel.id)
+                        
+                        TextField("Предоплата", text: $viewModel.prepayment)
+                        
+                        TextField("", text: $viewModel.nameCake)
+                        
+                        TextField("", text: $viewModel.cost)
+                        
+                        TextField("дата заказа", text: $viewModel.registrationDate)
+                    
+                        
+                        TextField("", text: $viewModel.idModel)
+                        
+                        TextField("Статус заказа", text: $viewModel.statusOrder)
                             
-                        BasketElem(cake: viewModel.selectedCake!)
+                        //BasketElem(cake: viewModel.selectedCake!)
                         
                     }, header: {
                         Text("Корзина")
                             .font(.title.bold())
                     })
+                    .textFieldStyle(.roundedBorder)
                     .padding()
                     
                     

@@ -8,6 +8,7 @@
 
 import SwiftUI
 import shared
+import Combine
 
 class AuthViewModel: ObservableObject{
     private let repo: IApi = KursovayaSDK().dialogChatModule.update
@@ -25,6 +26,7 @@ class AuthViewModel: ObservableObject{
     @Published var id: Int = 0
     
     func auth(){
+        
         repo.auth(number: phoneNumber, email: emain, completionHandler: {
             (client, error) in
             if client == nil {
@@ -36,6 +38,7 @@ class AuthViewModel: ObservableObject{
                 self.isClietExists = true
             }
         })
+        
         
     
     }
