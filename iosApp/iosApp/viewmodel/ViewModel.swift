@@ -38,6 +38,16 @@ class ViewModel: ObservableObject{
     
     @Published var id: String = ""
     
+    @Published var idMaster = ""
+    @Published var FIO = ""
+    @Published var salary = ""
+    @Published var idOrderAssigh = ""
+    @Published var cakeAssign: Orders_? = nil
+    @Published var FIOClient = ""
+    @Published var presumptiveDate = ""
+    @Published var numberClient = ""
+    @Published var modelCake = ""
+    
     func chooiseCake(cake: Cakes){
         self.selectedCake = cake
         self.nameCake = cake.name

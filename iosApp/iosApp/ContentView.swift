@@ -34,6 +34,7 @@ struct ContentView: View {
     @State private var idOrder = 0
     
     @State private var idModel = 0
+    @State private var showSS = false
 	var body: some View {
         
             
@@ -124,11 +125,22 @@ struct ContentView: View {
                                 })
                                 .frame(width: 160, height: 180)
                                 Button(action: {
+                                    viewModel.idOrderAssigh = order.idOrder
+                                    viewModel.cakeAssign = order
+                                    viewModel.statusOrder = order.statusOrder
+                                    viewModel.FIOClient = "\(order.surname) \(order.name_) \(order.lastname)"
+                                    viewModel.numberClient = "\(order.phoneNumber)"
+                                    viewModel.statusOrder = order.statusOrder
+                                    viewModel.modelCake = order.name
+                                    viewModel.cost = order.cost
+                                    viewModel.prepayment = order.prepayment
                                     idOrder = Int(order.idOrder)!
                                     idModel = Int(order.idModel_)!
                                     master.toggle()
                                 }, label: {
                                     VStack{
+                                        Text("Id Заказа \(order.idOrder)")
+                                            .frame(maxWidth: .infinity,  alignment: .leading)
                                         Text("Клиент: \(order.surname) \(order.name_) \(order.lastname)")
                                             .frame(maxWidth: .infinity,  alignment: .leading)
                                         Text("Модель торта: \(order.name)")
@@ -153,41 +165,115 @@ struct ContentView: View {
                         }
                     }
                     .sheet(isPresented: $master, content: {
-                        ScrollView(content: {
-                            LazyVStack(content: {
-                                ForEach(viewModel.masters ,id: \.self, content: {
-                                    master in
-                                    VStack{
-                                        Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
-                                            .frame(maxWidth: .infinity,  alignment: .leading)
-                                        Text("Зп \(master.salary)")
-                                            .frame(maxWidth: .infinity,  alignment: .leading)
+                        if(!showSS){
+                            ScrollView(content: {
+                                LazyVStack(content: {
+                                    ForEach(viewModel.masters ,id: \.self, content: {
+                                        master in
+                                        VStack{
+                                            Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
+                                                .frame(maxWidth: .infinity,  alignment: .leading)
+                                            Text("Зп \(master.salary)")
+                                                .frame(maxWidth: .infinity,  alignment: .leading)
+                                            
+                                            
+                                        }
+                                        .onTapGesture {
+                                            viewModel.idMaster = master.idMaster
+                                            viewModel.FIO = "\(master.surname) \(master.name) \(master.lastname)"
+                                            viewModel.salary = "\(master.salary)"
+                                            showSS.toggle()
+                                            //viewModel.assignmentMaster(idMaster: "\(master.idMaster)", idOrders: "\(self.idOrder)")
+                                        }
+                                        .padding()
                                         
-                                        
-                                    }
-                                    .onTapGesture {
-                                        viewModel.assignmentMaster(idMaster: "\(master.idMaster)", idOrders: "\(self.idOrder)")
-                                    }
-                                    .padding()
-                                    
-                                    Divider()
+                                        Divider()
+                                    })
                                 })
+                                
+                                Divider()
+                                    .foregroundColor(.red)
+                                
+                                
                             })
-                            
-                            Divider()
-                                .foregroundColor(.red)
-                            
-                            
-                        })
-                        .onAppear{
-                            viewModel.getAllMaster()
+                            .onAppear{
+                                viewModel.getAllMaster()
+                            }
+                        
+                        }else{
+                            ScrollView{
+                                LazyVStack(content: {
+                                    Section(content: {
+                                        Text("Id Мастера")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.idMaster)
+                                        
+                                        Text("Фио Мастера")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.FIO)
+                                        
+                                        Text("Зарплата  Мастера")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.salary)
+                                    }, header: {
+                                        Text("Информация о мастере")
+                                            .bold()
+                                    })
+                                    Spacer(minLength: 30)
+                                    Section(content: {
+                                        
+                                        Text("Id заказа")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.idOrderAssigh)
+                                        
+                                        Text("Статус заказа")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.statusOrder)
+                                        
+                                        Text("Примерная дата готовности заказа")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        TextField("", text: $viewModel.presumptiveDate)
+                                        
+                                        Text("Модель торта - \(viewModel.modelCake)\nПредоплата - \(viewModel.prepayment)\nОбщая стоимость - \(viewModel.cost)")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                      
+                                        
+                                        
+                                        
+                                       
+                                    }, header: {
+                                        Text("Информация о заказе")
+                                            .bold()
+                                    })
+                                    Spacer(minLength: 30)
+                                    Section(content: {
+                                        TextField("", text: $viewModel.FIOClient)
+                                            
+                                       
+                                        TextField("", text: $viewModel.numberClient)
+                                           
+                                        
+                                            
+                                    }, header: {
+                                        Text("Информация о клиенте")
+                                            .bold()
+                                    })
+                                    Spacer(minLength: 30)
+                                })
+                               
+                                
+                                
+                            }
+                            .textFieldStyle(.roundedBorder)
+                            .padding()
                         }
                     })
-                    .padding()
+                
                     Divider()
                     Divider()
                     Divider()
                     
+                   
                     
                     LazyVStack(content: {
                       Section(content: {
@@ -225,6 +311,8 @@ struct ContentView: View {
                     viewModel.getmasterOrder()
                 }
             })
+            
+            
             .sheet(isPresented: $showSheet, content: {
                 ScrollView(.vertical, showsIndicators: false){
                     
