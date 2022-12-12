@@ -5,6 +5,28 @@ import random
 app = Flask(__name__)
 
 
+@app.route('/showAllClient', methods=['GET'])
+def showAllClient():
+    with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
+        cursor = db.cursor()
+        query = f""" SELECT * FROM Client """
+        cursor.execute(query)
+        response = '['
+        for row in cursor.fetchall():
+            response += "{"
+            response += f'\"idClient\":\"{row[0]}\",' \
+                        f'\"surname\":\"{row[1]}\",' \
+                        f'\"name\":\"{row[2]}\",' \
+                        f'\"lastname\":\"{row[3]}\",' \
+                        f'\"phone\":\"{row[4]}\",' \
+                        f'\"mail\":\"{row[5]}\"'
+            response += "},"
+
+
+        response = response[:-1]
+        response += "]"
+        return response
+
 @app.route('/auth', methods=['GET'])
 def auth():
     number = request.args.get('number')
@@ -228,7 +250,8 @@ def getMasterOrders():
         query = f""" SELECT * FROM MasrerOrder m
         LEFT JOIN Master mas ON m.idMaster = mas.idMaster
         LEFT JOIN Orders o ON o.idOrder = m.idOrder
-        LEFT JOIN Model mod ON mod.idModel = o.idModel """
+        LEFT JOIN Model mod ON mod.idModel = o.idModel
+		LEFT JOIN Client c ON c.idClient = o.idClient """
         cursor.execute(query)
         response = '['
         for row in cursor.fetchall():
@@ -236,9 +259,9 @@ def getMasterOrders():
             response += f"\"idMaster\":\"{row[0]}\"," \
                         f"\"idOrder\":\"{row[1]}\"," \
                         f"\"idMaster\":\"{row[2]}\"," \
-                        f"\"surname\":\"{row[3]}\"," \
-                        f"\"name\":\"{row[4]}\"," \
-                        f"\"lastname\":\"{row[5]}\"," \
+                        f"\"surnameMaster\":\"{row[3]}\"," \
+                        f"\"nameMaster\":\"{row[4]}\"," \
+                        f"\"lastnameMaster\":\"{row[5]}\"," \
                         f"\"salary\":\"{row[6]}\"," \
                         f"\"idOrder\":\"{row[7]}\"," \
                         f"\"registrationOrder\":\"{row[8]}\"," \
@@ -252,9 +275,15 @@ def getMasterOrders():
                         f"\"cost\":\"{row[16]}\"," \
                         f"\"weight\":\"{row[17]}\"," \
                         f"\"productionTime\":\"{row[18]}\"," \
-                        f"\"name_\":\"{row[19]}\"," \
+                        f"\"nameCake\":\"{row[19]}\"," \
                         f"\"type\":\"{row[20]}\"," \
-                        f"\"patch\":\"{row[21]}\""
+                        f"\"patch\":\"{row[21]}\"," \
+                        f"\"idClient\":\"{row[22]}\"," \
+                        f"\"surnameClient\":\"{row[23]}\"," \
+                        f"\"nameClient\":\"{row[24]}\"," \
+                        f"\"lastnameClient\":\"{row[25]}\"," \
+                        f"\"phone\":\"{row[26]}\"," \
+                        f"\"mail\":\"{row[27]}\""
             response += "},"
         response = response[:-1]
         response += "]"
