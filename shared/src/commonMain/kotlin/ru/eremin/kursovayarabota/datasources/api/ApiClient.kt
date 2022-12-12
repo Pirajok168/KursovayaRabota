@@ -38,6 +38,8 @@ interface IApi{
     suspend fun createOrder(idModel: String, idClient: String, cost: String, time: Int, idOrder: String, registrationDate: String, statusOrder: String, presumptiveDate: String, prepayment: String)
 
     suspend fun getMasterOrders(): List<MasterOrders>
+
+    suspend fun showAllClient(): List<Client>
 }
 
 const val BASE = "http://192.168.100.4:8008"
@@ -210,6 +212,23 @@ class ApiClient(
             }.decodeFromString(text)
         } catch (e :SerializationException){
             emptyList<MasterOrders>()
+        }
+    }
+
+    override suspend fun showAllClient(): List<Client> {
+        val text = httpClient.get("${BASE}/showAllClient") {
+            url {
+
+            }
+        }.bodyAsText()
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<Client>()
         }
     }
 
