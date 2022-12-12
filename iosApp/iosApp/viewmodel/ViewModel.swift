@@ -50,6 +50,8 @@ class ViewModel: ObservableObject{
     @Published var modelCake = ""
     
     @Published var idClientShow = ""
+    var clientShor: Client_? = nil
+    var basketClient: Client_? = nil
     
     func chooiseCake(cake: Cakes){
         self.selectedCake = cake
@@ -63,8 +65,32 @@ class ViewModel: ObservableObject{
         self.idOrder = ""
         self.day = cake.productionTime
     }
+    @Published var orderDay: [OrderDay] = []
+    @Published var sumOrder: Int = 0
+    
+    func showOrderByDate(date: String){
+        repo.showOrderByDay(day: date, completionHandler: {
+            (odrderDay, _) in
+           
+            self.orderDay = odrderDay ?? []
+            
+            for order in self.orderDay {
+                self.sumOrder += Int(order.cost)!
+            }
+        })
+    }
     
     @Published var clients: [Client_] = []
+    
+    @Published var populationModel: [PopulationModel] = []
+    
+    func showPopulationCake(){
+        repo.populationModel { model, _ in
+            self.populationModel = model ?? []
+           
+        }
+    }
+    
     func showAllClient(){
         repo.showAllClient(completionHandler: {
             clients, _ in

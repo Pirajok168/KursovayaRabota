@@ -35,6 +35,9 @@ struct ContentView: View {
     
     @State private var idModel = 0
     @State private var showSS = false
+    @State private var showOrderByDate = false
+    @State private var showPopilation = false
+    @State private var date = ""
 	var body: some View {
         
             
@@ -96,6 +99,15 @@ struct ContentView: View {
                    
                 })
                 
+                ToolbarItem(placement: .navigationBarTrailing, content: {
+                    Button(action: {
+                        showPopilation.toggle()
+                    }, label: {
+                        Image(systemName: "square")
+                    })
+                   
+                })
+                
                 ToolbarItem(placement: .navigationBarLeading, content: {
                     Button(action: {
                         manage.toggle()
@@ -103,7 +115,144 @@ struct ContentView: View {
                         Image(systemName: "person.fill")
                     })
                 })
+                
+                ToolbarItem(placement: .navigationBarLeading, content: {
+                    Button(action: {
+                        showOrderByDate.toggle()
+                    }, label: {
+                        Image(systemName: "square.fill")
+                    })
+                })
             }
+            .sheet(isPresented: $showPopilation, content: {
+                ScrollView(content: {
+                    Button(action: {
+                        viewModel.showPopulationCake()
+                    }, label: {
+                        Text("Показать популярные торты")
+                    })
+                    .padding()
+                    
+                    ForEach(viewModel.populationModel, id: \.self){
+                        model in
+                        
+                        ZStack{
+                            Color.clear.background(.ultraThinMaterial)
+                            
+                            HStack {
+                               
+                                
+                                AsyncImage(url: URL(string: model.patch), content: {
+                                    image in
+                                    
+                                        image
+                                            .resizable()
+                                            .frame(width: 160, height: 180)
+                                            .aspectRatio(contentMode: .fill)
+                                            .transition(.scale)
+                                            
+                                    
+                                   
+                                    
+                                }, placeholder: {
+                                    ProgressView()
+                                })
+                                .frame(width: 160, height: 180)
+                                    
+                                
+                                
+                                
+                                
+                                VStack(alignment: .leading){
+                                    Text("Количество раз заказывали: \(model.count)")
+                                        .padding(.horizontal)
+                                    
+                                    Text("Модель торта \(model.name)")
+                                        .bold()
+                                        .font(.system(size: 20))
+                                        .padding(.horizontal)
+                                        .padding(.bottom, 5)
+                                    
+                                   
+                                    
+                                    Text("Тип: \(model.type)")
+                                        .padding(.horizontal)
+                                        
+                                    
+                                    
+                                    
+                                    
+                                }
+                                
+                                
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            
+                            
+                            
+                           
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, minHeight: 180)
+                        .cornerRadius(50)
+                    }
+                })
+            })
+            .sheet(isPresented: $showOrderByDate, content: {
+                ScrollView{
+                    HStack{
+                        TextField("Введите дату", text: $date)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        Button(action: {
+                            viewModel.showOrderByDate(date: date)
+                        }, label: {
+                            Text("Поиск")
+                        })
+                        
+                    }
+                    .padding()
+                    
+                    Text("Общая стоимость заказов - \(viewModel.sumOrder)")
+                        .bold()
+                        .padding()
+                    
+                    ForEach(viewModel.orderDay, id: \.self){
+                        order in
+                        VStack{
+                            Text("Стоимость заказа - \(order.cost)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("ФИО клиента - \(order.surnameClient) \(order.nameClient) \(order.lastnameClient)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Телефон клиента - \(order.phone)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Модель торта - \(order.nameCake)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Предоплата - \(order.prepayment)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Дата регистрации заказа - \(order.registrationOrder)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Предположительная дата выдачи - \(order.presumptiveDate)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            if order.idMaster != "None"{
+                                Text("ФИО Мастера, выполняющего заказ - \(order.surnameMaster) \(order.nameMaster) \(order.lastnameMaster)")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                        }
+                        .padding()
+                        Divider()
+                    }
+                }
+            })
             .sheet(isPresented: $manage, content: {
                 ScrollView(content: {
                     LazyVStack{
@@ -328,7 +477,7 @@ struct ContentView: View {
                     Divider()
                     Divider()
                     
-                   
+                    
                     
                     LazyVStack(content: {
                       Section(content: {
@@ -336,13 +485,28 @@ struct ContentView: View {
                               master in
                               
                               VStack{
-                                  Text("ФИО мастера \(master.surname) \(master.name) \(master.lastname)")
+                                  Text("ФИО мастера \(master.surnameMaster) \(master.nameMaster) \(master.lastnameMaster)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
                                   Text("Id client \(master.idClient)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
-                                  Text("Торт \(master.name_)")
+                                  Text("ФИО КЛИЕНТА \(master.surnameClient) \(master.nameClient) \(master.lastnameClient)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Стоимость заказа \(master.cost)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Дата заказа \(master.registrationOrder)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Примерная дата выдачи заказа \(master.presumptiveDate)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Номер телефона и почта клиента \(master.phone) \(master.mail)")
+                                      .frame(maxWidth: .infinity,  alignment: .leading)
+                                  
+                                  Text("Торт \(master.nameCake)")
                                       .frame(maxWidth: .infinity,  alignment: .leading)
                                   
                                   Text("Статус \(master.statusOrder)")
@@ -350,9 +514,10 @@ struct ContentView: View {
 
                               }
                               .padding()
+                              Divider()
                           })
                       }, header: {
-                          Text("Заказы, который выполняются")
+                          Text("Заказы, которые выполняются")
                               .font(.title3)
                               .frame(maxWidth: .infinity,  alignment: .leading)
                               .padding()
@@ -387,6 +552,7 @@ struct ContentView: View {
                                                 client in
                                                 Button(action: {
                                                     viewModel.id = client.idClient
+                                                    viewModel.basketClient = client
                                                 }, label: {
                                                     VStack{
                                                         Text("Id клиента - \(client.idClient)")
@@ -418,7 +584,8 @@ struct ContentView: View {
                                 
                             }
                             
-                            TextField("ID заказа", text: $viewModel.id)
+                            Text("ID клиента - \(viewModel.id)\nФИО - \(viewModel.basketClient?.surname ?? "") \(viewModel.basketClient?.name ?? "") \(viewModel.basketClient?.lastname ?? "")\nНомер телефона - \(viewModel.basketClient?.phone ?? "")")
+                          
                             
                             TextField("Предоплата", text: $viewModel.prepayment)
                             
@@ -466,7 +633,7 @@ struct ContentView: View {
                 NavigationView{
                     ScrollView(.vertical){
                         VStack{
-                            Text("Показаны заказы для клиента - \(viewModel.idClientShow)")
+                            Text("Показаны заказы для клиента - \(viewModel.idClientShow). ФИО - \(viewModel.clientShor?.surname ?? "") \(viewModel.clientShor?.name ?? "") \(viewModel.clientShor?.lastname ?? "")")
                             NavigationLink(destination: {
                                 ScrollView{
                                     LazyVStack{
@@ -474,6 +641,7 @@ struct ContentView: View {
                                             client in
                                             Button(action: {
                                                 viewModel.idClientShow = client.idClient
+                                                viewModel.clientShor = client
                                                 viewModel.getOrders()
                                             }, label: {
                                                 VStack{
