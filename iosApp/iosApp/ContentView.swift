@@ -166,116 +166,162 @@ struct ContentView: View {
                         }
                     }
                     .sheet(isPresented: $master, content: {
-                        if(!showSS){
-                            ScrollView(content: {
-                                LazyVStack(content: {
-                                    ForEach(viewModel.masters ,id: \.self, content: {
-                                        master in
-                                        VStack{
-                                            Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
-                                                .frame(maxWidth: .infinity,  alignment: .leading)
-                                            Text("Зп \(master.salary)")
-                                                .frame(maxWidth: .infinity,  alignment: .leading)
+                        
+                            
+                            
+                            if(!showSS){
+                                ScrollView(content: {
+                                    LazyVStack(content: {
+                                        ForEach(viewModel.masters ,id: \.self, content: {
+                                            master in
+                                            VStack{
+                                                Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
+                                                    .frame(maxWidth: .infinity,  alignment: .leading)
+                                                Text("Зп \(master.salary)")
+                                                    .frame(maxWidth: .infinity,  alignment: .leading)
+                                                
+                                                
+                                            }
+                                            .onTapGesture {
+                                                viewModel.idMaster = master.idMaster
+                                                viewModel.FIO = "\(master.surname) \(master.name) \(master.lastname)"
+                                                viewModel.salary = "\(master.salary)"
+                                                showSS.toggle()
+                                                //viewModel.assignmentMaster(idMaster: "\(master.idMaster)", idOrders: "\(self.idOrder)")
+                                            }
+                                            .padding()
                                             
-                                            
-                                        }
-                                        .onTapGesture {
-                                            viewModel.idMaster = master.idMaster
-                                            viewModel.FIO = "\(master.surname) \(master.name) \(master.lastname)"
-                                            viewModel.salary = "\(master.salary)"
-                                            showSS.toggle()
-                                            //viewModel.assignmentMaster(idMaster: "\(master.idMaster)", idOrders: "\(self.idOrder)")
-                                        }
-                                        .padding()
-                                        
-                                        Divider()
+                                            Divider()
+                                        })
                                     })
+                                    
+                                    Divider()
+                                        .foregroundColor(.red)
+                                    
+                                    
                                 })
+                                .onAppear{
+                                    viewModel.getAllMaster()
+                                }
                                 
-                                Divider()
-                                    .foregroundColor(.red)
-                                
-                                
-                            })
-                            .onAppear{
-                                viewModel.getAllMaster()
+                            }else{
+                                NavigationView{
+                                    ScrollView{
+                                        LazyVStack(content: {
+                                            Section(content: {
+                                                VStack{
+                                                    Text("Id Мастера")
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                    
+                                                    NavigationLink(destination: {
+                                                        
+                                                        ScrollView(content: {
+                                                            LazyVStack(content: {
+                                                                ForEach(viewModel.masters ,id: \.self, content: {
+                                                                    master in
+                                                                    Button(action: {
+                                                                        viewModel.idMaster = master.idMaster
+                                                                        viewModel.FIO = "\(master.surname) \(master.name) \(master.lastname)"
+                                                                        viewModel.salary = "\(master.salary)"
+                                                                        
+                                                                    }, label: {
+                                                                        VStack{
+                                                                            Text("ФИО \(master.surname) \(master.name) \(master.lastname)")
+                                                                                .frame(maxWidth: .infinity,  alignment: .leading)
+                                                                            Text("Зп \(master.salary)")
+                                                                                .frame(maxWidth: .infinity,  alignment: .leading)
+                                                                            
+                                                                            
+                                                                        }
+                                                                    })
+                                                                    
+                                                                    .onTapGesture {
+                                                                        
+                                                                        
+                                                                    }
+                                                                    .padding()
+                                                                    
+                                                                    Divider()
+                                                                })
+                                                            })
+                                                        })
+                                                        
+                                                    }, label: {
+                                                        Text("выбрать мастера")
+                                                    })
+                                                }
+                                                
+                                                TextField("", text: $viewModel.idMaster)
+                                                
+                                                Text("Фио Мастера")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                TextField("", text: $viewModel.FIO)
+                                                
+                                                Text("Зарплата  Мастера")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                TextField("", text: $viewModel.salary)
+                                            }, header: {
+                                                Text("Информация о мастере")
+                                                    .bold()
+                                            })
+                                            Spacer(minLength: 30)
+                                            Section(content: {
+                                                
+                                                Text("Id заказа")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                TextField("", text: $viewModel.idOrderAssigh)
+                                                
+                                                Text("Статус заказа")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                TextField("", text: $viewModel.statusOrder)
+                                                
+                                                Text("Примерная дата готовности заказа")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                TextField("", text: $viewModel.presumptiveDate)
+                                                
+                                                Text("Модель торта - \(viewModel.modelCake)\nПредоплата - \(viewModel.prepayment)\nОбщая стоимость - \(viewModel.cost)")
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                
+                                                
+                                                
+                                                
+                                                
+                                            }, header: {
+                                                Text("Информация о заказе")
+                                                    .bold()
+                                            })
+                                            Spacer(minLength: 30)
+                                            Section(content: {
+                                                TextField("", text: $viewModel.FIOClient)
+                                                
+                                                
+                                                TextField("", text: $viewModel.numberClient)
+                                                
+                                                
+                                                
+                                            }, header: {
+                                                Text("Информация о клиенте")
+                                                    .bold()
+                                            })
+                                            Spacer(minLength: 30)
+                                        })
+                                        
+                                        
+                                        Button(action: {
+                                            viewModel.assignmentMaster(idMaster: viewModel.idMaster, idOrders: viewModel.idOrderAssigh)
+                                            showSS.toggle()
+                                            
+                                        }, label: {
+                                            Text("Назначить мастера")
+                                                .frame(maxWidth: .infinity)
+                                        })
+                                        
+                                    }
+                                    .textFieldStyle(.roundedBorder)
+                                    .padding()
+                                }
                             }
                         
-                        }else{
-                            ScrollView{
-                                LazyVStack(content: {
-                                    Section(content: {
-                                        Text("Id Мастера")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.idMaster)
-                                        
-                                        Text("Фио Мастера")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.FIO)
-                                        
-                                        Text("Зарплата  Мастера")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.salary)
-                                    }, header: {
-                                        Text("Информация о мастере")
-                                            .bold()
-                                    })
-                                    Spacer(minLength: 30)
-                                    Section(content: {
-                                        
-                                        Text("Id заказа")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.idOrderAssigh)
-                                        
-                                        Text("Статус заказа")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.statusOrder)
-                                        
-                                        Text("Примерная дата готовности заказа")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        TextField("", text: $viewModel.presumptiveDate)
-                                        
-                                        Text("Модель торта - \(viewModel.modelCake)\nПредоплата - \(viewModel.prepayment)\nОбщая стоимость - \(viewModel.cost)")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                      
-                                        
-                                        
-                                        
-                                       
-                                    }, header: {
-                                        Text("Информация о заказе")
-                                            .bold()
-                                    })
-                                    Spacer(minLength: 30)
-                                    Section(content: {
-                                        TextField("", text: $viewModel.FIOClient)
-                                            
-                                       
-                                        TextField("", text: $viewModel.numberClient)
-                                           
-                                        
-                                            
-                                    }, header: {
-                                        Text("Информация о клиенте")
-                                            .bold()
-                                    })
-                                    Spacer(minLength: 30)
-                                })
-                               
-                                
-                                Button(action: {
-                                    viewModel.assignmentMaster(idMaster: viewModel.idMaster, idOrders: viewModel.idOrderAssigh)
-                                    showSS.toggle()
-                                    
-                                }, label: {
-                                    Text("Назначить мастера")
-                                        .frame(maxWidth: .infinity)
-                                })
-                                
-                            }
-                            .textFieldStyle(.roundedBorder)
-                            .padding()
-                        }
                     })
                 
                     Divider()
@@ -323,100 +369,178 @@ struct ContentView: View {
             
             
             .sheet(isPresented: $showSheet, content: {
-                ScrollView(.vertical, showsIndicators: false){
-                    
-                    
-                    Section(content: {
-                      
-                        TextField("ID заказа", text: $viewModel.idOrder)
+                NavigationView{
+                    ScrollView(.vertical, showsIndicators: false){
                         
-                        Text("ID Клиента")
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                        TextField("ID заказа", text: $viewModel.id)
                         
-                        TextField("Предоплата", text: $viewModel.prepayment)
-                        
-                        TextField("", text: $viewModel.nameCake)
-                        
-                        TextField("", text: $viewModel.cost)
-                        
-                        TextField("дата заказа", text: $viewModel.registrationDate)
-                        
-                        TextField("Примерная дата готовности", text: $viewModel.presumptiveDate)
-                    
-                        Text("Время готовки торта - \(viewModel.day) дня")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                       
-                        
-                        TextField("Статус заказа", text: $viewModel.statusOrder)
+                        Section(content: {
                             
-                        
-                        
-                    }, header: {
-                        Text("Корзина")
-                            .font(.title.bold())
-                    })
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
-                    
-                    
-                   
-                }
-                .overlay(alignment: .bottom, content: {
-                    Button(action: {
-                        viewModel.createOrder()
-                    }, label: {
-                        Text("Сделать заказ")
-                            .frame(maxWidth: .infinity)
-                    })
-                    .buttonStyle(.bordered)
-                    .cornerRadius(30)
-                    
-                    .padding()
-                })
-            })
-            .sheet(isPresented: $profile, content: {
-                ScrollView(.vertical){
-                    LazyVStack{
-                        ForEach(viewModel.orders, id: \.self){
-                            order in
+                            TextField("ID заказа", text: $viewModel.idOrder)
                             
                             HStack{
-                                AsyncImage(url: URL(string: order.patch), content: {
-                                    image in
-                                    
-                                    image
-                                        .resizable()
-                                        .frame(width: 160, height: 180)
-                                        .aspectRatio(contentMode: .fill)
-                                        .transition(.scale)
-                                    
-                                    
-                                    
-                                    
-                                }, placeholder: {
-                                    ProgressView()
+                                Text("ID Клиента")
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                                NavigationLink(destination: {
+                                    ScrollView{
+                                        LazyVStack{
+                                            ForEach(viewModel.clients, id: \.self){
+                                                client in
+                                                Button(action: {
+                                                    viewModel.id = client.idClient
+                                                }, label: {
+                                                    VStack{
+                                                        Text("Id клиента - \(client.idClient)")
+                                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                                        Text("FIO клиента - \(client.surname) \(client.name) \(client.lastname)")
+                                                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                        Text("Телефон клиента - \(client.phone)")
+                                                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                        Text("Почта клиента - \(client.mail)")
+                                                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                    }
+                                                })
+                                                
+                                                Divider()
+                                            }
+                                        }
+                                    }
+                                    .onAppear{
+                                        viewModel.showAllClient()
+                                    }
+                                }, label: {
+                                    Text("Выбрать клиента")
                                 })
-                                .frame(width: 160, height: 180)
-                             
-                                VStack(alignment: .leading){
-                                    Text("Торт: \(order.name)")
-                                    
-                                    Text("Статус заказа: \(order.statusOrder)")
-                                   
-                                    Text("Можно забрать: \(order.presumptiveDate)")
-                                }
+                                
+                                
+                                
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .cornerRadius(20)
-                        }
+                            
+                            TextField("ID заказа", text: $viewModel.id)
+                            
+                            TextField("Предоплата", text: $viewModel.prepayment)
+                            
+                            TextField("", text: $viewModel.nameCake)
+                            
+                            TextField("", text: $viewModel.cost)
+                            
+                            TextField("дата заказа", text: $viewModel.registrationDate)
+                            
+                            TextField("Примерная дата готовности", text: $viewModel.presumptiveDate)
+                            
+                            Text("Время готовки торта - \(viewModel.day) дня")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            
+                            TextField("Статус заказа", text: $viewModel.statusOrder)
+                            
+                            
+                            
+                        }, header: {
+                            Text("Корзина")
+                                .font(.title.bold())
+                        })
+                        .textFieldStyle(.roundedBorder)
                         .padding()
                         
                         
+                        
                     }
+                    .overlay(alignment: .bottom, content: {
+                        Button(action: {
+                            viewModel.createOrder()
+                        }, label: {
+                            Text("Сделать заказ")
+                                .frame(maxWidth: .infinity)
+                        })
+                        .buttonStyle(.bordered)
+                        .cornerRadius(30)
+                        
+                        .padding()
+                    })
                 }
-                .onAppear{
-                    viewModel.getOrders()
+            })
+            .sheet(isPresented: $profile, content: {
+                NavigationView{
+                    ScrollView(.vertical){
+                        VStack{
+                            Text("Показаны заказы для клиента - \(viewModel.idClientShow)")
+                            NavigationLink(destination: {
+                                ScrollView{
+                                    LazyVStack{
+                                        ForEach(viewModel.clients, id: \.self){
+                                            client in
+                                            Button(action: {
+                                                viewModel.idClientShow = client.idClient
+                                                viewModel.getOrders()
+                                            }, label: {
+                                                VStack{
+                                                    Text("Id клиента - \(client.idClient)")
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                    Text("FIO клиента - \(client.surname) \(client.name) \(client.lastname)")
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                    Text("Телефон клиента - \(client.phone)")
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                    Text("Почта клиента - \(client.mail)")
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                                }
+                                            })
+                                            
+                                            Divider()
+                                        }
+                                    }
+                                }
+                                .onAppear{
+                                    viewModel.showAllClient()
+                                }
+                            }, label: {
+                                Text("Показать заказы для клиента")
+                            })
+                        }
+                        LazyVStack{
+                            ForEach(viewModel.orders, id: \.self){
+                                order in
+                                
+                                HStack{
+                                    AsyncImage(url: URL(string: order.patch), content: {
+                                        image in
+                                        
+                                        image
+                                            .resizable()
+                                            .frame(width: 160, height: 180)
+                                            .aspectRatio(contentMode: .fill)
+                                            .transition(.scale)
+                                        
+                                        
+                                        
+                                        
+                                    }, placeholder: {
+                                        ProgressView()
+                                    })
+                                    .frame(width: 160, height: 180)
+                                    
+                                    VStack(alignment: .leading){
+                                        Text("Торт: \(order.name)")
+                                        
+                                        Text("Статус заказа: \(order.statusOrder)")
+                                        
+                                        Text("Можно забрать: \(order.presumptiveDate)")
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .cornerRadius(20)
+                            }
+                            .padding()
+                            
+                            
+                        }
+                    }
+                    
                 }
             })
             
