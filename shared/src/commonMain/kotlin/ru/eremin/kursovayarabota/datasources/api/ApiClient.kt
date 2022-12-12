@@ -40,6 +40,10 @@ interface IApi{
     suspend fun getMasterOrders(): List<MasterOrders>
 
     suspend fun showAllClient(): List<Client>
+
+    suspend fun showOrderByDay(day: String): List<OrderDay>
+
+    suspend fun populationModel(): List<PopulationModel>
 }
 
 const val BASE = "http://192.168.100.4:8008"
@@ -229,6 +233,40 @@ class ApiClient(
             }.decodeFromString(text)
         } catch (e :SerializationException){
             emptyList<Client>()
+        }
+    }
+
+    override suspend fun showOrderByDay(day: String): List<OrderDay> {
+        val text = httpClient.get("${BASE}/orderDay") {
+            url {
+                parameter("day", day)
+            }
+        }.bodyAsText()
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<OrderDay>()
+        }
+    }
+
+    override suspend fun populationModel(): List<PopulationModel> {
+        val text = httpClient.get("${BASE}/populationCake") {
+            url {
+
+            }
+        }.bodyAsText()
+        return try {
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }.decodeFromString(text)
+        } catch (e :SerializationException){
+            emptyList<PopulationModel>()
         }
     }
 

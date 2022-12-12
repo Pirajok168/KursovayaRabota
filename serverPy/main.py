@@ -22,10 +22,10 @@ def showAllClient():
                         f'\"mail\":\"{row[5]}\"'
             response += "},"
 
-
         response = response[:-1]
         response += "]"
         return response
+
 
 @app.route('/auth', methods=['GET'])
 def auth():
@@ -78,6 +78,82 @@ def getCake():
         return response
 
 
+@app.route('/orderDay', methods=['GET'])
+def orderDay():
+    day = request.args.get('day')
+    with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
+        cursor = db.cursor()
+        query = f""" SELECT * FROM MasrerOrder m
+                    LEFT JOIN Master mas ON m.idMaster = mas.idMaster
+                    RIGHT JOIN Orders o ON o.idOrder = m.idOrder
+                    LEFT JOIN Model mod ON mod.idModel = o.idModel
+                    LEFT JOIN Client c ON c.idClient = o.idClient
+                    WHERE o.registrationDate = '{day}'  """
+        cursor.execute(query)
+        response = '['
+        for row in cursor.fetchall():
+            response += "{"
+
+            response += f"\"idMaster\":\"{row[0]}\"," \
+                        f"\"idOrder\":\"{row[1]}\"," \
+                        f"\"idMaster\":\"{row[2]}\"," \
+                        f"\"surnameMaster\":\"{row[3]}\"," \
+                        f"\"nameMaster\":\"{row[4]}\"," \
+                        f"\"lastnameMaster\":\"{row[5]}\"," \
+                        f"\"salary\":\"{row[6]}\"," \
+                        f"\"idOrder\":\"{row[7]}\"," \
+                        f"\"registrationOrder\":\"{row[8]}\"," \
+                        f"\"presumptiveDate\":\"{row[9]}\"," \
+                        f"\"idModel\":\"{row[10]}\"," \
+                        f"\"idClient\":\"{row[11]}\"," \
+                        f"\"costOrder\":\"{row[12]}\"," \
+                        f"\"prepayment\":\"{row[13]}\"," \
+                        f"\"statusOrder\":\"{row[14]}\"," \
+                        f"\"idModel\":\"{row[15]}\"," \
+                        f"\"cost\":\"{row[16]}\"," \
+                        f"\"weight\":\"{row[17]}\"," \
+                        f"\"productionTime\":\"{row[18]}\"," \
+                        f"\"nameCake\":\"{row[19]}\"," \
+                        f"\"type\":\"{row[20]}\"," \
+                        f"\"patch\":\"{row[21]}\"," \
+                        f"\"idClient\":\"{row[22]}\"," \
+                        f"\"surnameClient\":\"{row[23]}\"," \
+                        f"\"nameClient\":\"{row[24]}\"," \
+                        f"\"lastnameClient\":\"{row[25]}\"," \
+                        f"\"phone\":\"{row[26]}\"," \
+                        f"\"mail\":\"{row[27]}\""
+
+
+            response += "},"
+        response = response[:-1]
+        response += "]"
+        print(response)
+        return response
+
+@app.route('/populationCake', methods=['GET'])
+def populationCake():
+    with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
+        cursor = db.cursor()
+        query = f""" SELECT o.idModel, COUNT(o.idModel), m.name, m.type, m.patch
+                     FROM Orders o 
+                     LEFT JOIN Model m ON m.idModel = o.idModel GROUP BY o.idModel,  m.name, m.type, m.patch ;  """
+        cursor.execute(query)
+        response = '['
+        for row in cursor.fetchall():
+            response += "{"
+            response += f'\"idModel\":\"{row[0]}\",' \
+                        f'\"count\":\"{row[1]}\",' \
+                        f'\"name\":\"{row[2]}\",' \
+                        f'\"type\":\"{row[3]}\",' \
+                        f'\"patch\":\"{row[4]}\"'
+
+            response += "},"
+        response = response[:-1]
+        response += "]"
+        print(response)
+        return response
+
+
 @app.route('/showCakeByCost', methods=['GET'])
 def showCakeByCost():
     cost = request.args.get('cost')
@@ -106,6 +182,7 @@ def showCakeByCost():
 @app.route('/showOrderByIndividualClient', methods=['GET'])
 def showOrderByIndividualClient():
     idClient = request.args.get('idClient')
+    print(idClient)
     with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
         cursor = db.cursor()
         query = f""" SELECT * FROM Orders o LEFT JOIN Model m ON m.idModel = o.idModel WHERE o.idClient = {idClient} """
@@ -152,9 +229,6 @@ def createOrder():
         query = f""" INSERT INTO Orders VALUES('{id}', '{registrationDate}', '{presumptiveDate}', '{idModel}', '{idClient}', '{cost}', '{prepayment}', '{status}') """
         cursor.execute(query)
 
-
-
-
     return "Ok"
 
 
@@ -164,16 +238,15 @@ def assignment():
     idOrder = request.args.get('idOrder')
     status = request.args.get('status')
     date = request.args.get('date')
+    print(date)
     with pyodbc.connect('DRIVER={SQL Server};SERVER=localhost;DATABASE=test;Trusted_Connection=yes;') as db:
         cursor = db.cursor()
         id = random.randint(0, 30000)
         query = f""" INSERT INTO MasrerOrder(idMaster, idOrder) VALUES ('{idMaster}', '{idOrder}') """
         cursor.execute(query)
 
-        query = f""" update Orders set statusOrder='{status}' where idOrder = '{idOrder}' """
+        query = f""" update Orders set statusOrder='{status}', presumptiveDate = '{date}' where idOrder = '{idOrder}' """
         cursor.execute(query)
-
-
 
     return "Ok"
 
@@ -290,7 +363,6 @@ def getMasterOrders():
         print(response)
         return response
     return "Ok"
-
 
 
 if __name__ == "__main__":
